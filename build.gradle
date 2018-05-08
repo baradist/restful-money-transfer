@@ -9,7 +9,17 @@ repositories {
     mavenCentral()
 }
 
+def jettyVersion = '9.4.10.v20180503'
+def jerseyVersion = '2.27'
+
 dependencies {
-    compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.10.v20180503'
+    compile "org.eclipse.jetty:jetty-server:${jettyVersion}"
+    compile "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
+    compile "org.glassfish.jersey.core:jersey-server:${jerseyVersion}"
+    compile "org.glassfish.jersey.core:jersey-common:${jerseyVersion}"
+    compile "org.glassfish.jersey.inject:jersey-hk2:${jerseyVersion}"
+    compile "org.glassfish.jersey.containers:jersey-container-servlet-core:${jerseyVersion}"
+    compile "org.glassfish.jersey.containers:jersey-container-jetty-http:${jerseyVersion}"
+    compile "org.glassfish.jersey.media:jersey-media-moxy:${jerseyVersion}"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
