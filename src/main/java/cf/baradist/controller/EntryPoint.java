@@ -1,4 +1,4 @@
-package cf.baradist;
+package cf.baradist.controller;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

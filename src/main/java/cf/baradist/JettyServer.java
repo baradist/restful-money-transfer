@@ -1,11 +1,24 @@
 package cf.baradist;
 
+import cf.baradist.controller.EntryPoint;
+import cf.baradist.controller.UserController;
+import cf.baradist.dao.DaoFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 public class JettyServer {
     public static void main(String[] args) throws Exception {
+        initDb();
+        runServer();
+    }
+
+    private static void initDb() {
+        DaoFactory daoFactory = DaoFactory.getDaoFactory();
+        daoFactory.fillTestData();
+    }
+
+    private static void runServer() throws Exception {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
 
@@ -20,6 +33,9 @@ public class JettyServer {
         jerseyServlet.setInitParameter(
                 "jersey.config.server.provider.classnames",
                 EntryPoint.class.getCanonicalName());
+        jerseyServlet.setInitParameter(
+                "jersey.config.server.provider.classnames",
+                UserController.class.getCanonicalName());
 
         try {
             jettyServer.start();
