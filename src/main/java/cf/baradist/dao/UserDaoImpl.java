@@ -8,10 +8,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class UserDaoImpl implements UserDao {
 
-    private static final String SELECT_FROM_USER = "SELECT * FROM user";
     private static final String ID = "id";
     private static final String NAME = "name";
     private static final String EMAIL = "email";
@@ -20,10 +20,10 @@ public class UserDaoImpl implements UserDao {
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         try (Connection conn = H2DaoFactory.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement(SELECT_FROM_USER);
+            PreparedStatement stmt = conn.prepareStatement("SELECT id, name, email FROM user");
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                users.add(new User(rs.getInt(ID),
+                users.add(new User(rs.getLong(ID),
                         rs.getString(NAME),
                         rs.getString(EMAIL)));
             }
@@ -34,8 +34,18 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getUserById(long userId) {
-        return null;
+    public Optional<User> getUserById(long userId) {
+        try (Connection conn = H2DaoFactory.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement("SELECT id, name, email FROM user WHERE id = ?");
+            stmt.setLong(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            return Optional.ofNullable(!rs.next() ? null :
+                    new User(userId,
+                            rs.getString("name"),
+                            rs.getString("email")));
+        } catch (SQLException e) {
+            throw new RuntimeException("Can't read user with id = " + userId, e);
+        }
     }
 
     @Override

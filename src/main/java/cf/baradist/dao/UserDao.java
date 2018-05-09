@@ -3,11 +3,12 @@ package cf.baradist.dao;
 import cf.baradist.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserDao {
     List<User> getAllUsers();
 
-    User getUserById(long userId);
+    Optional<User> getUserById(long userId);
 
     User getUserByName(String userName);
 
