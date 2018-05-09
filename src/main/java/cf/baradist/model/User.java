@@ -2,10 +2,13 @@ package cf.baradist.model;
 
 import java.util.Objects;
 
-public final class User {
-    private final long id;
-    private final String name;
-    private final String email;
+public class User {
+    private long id;
+    private String name;
+    private String email;
+
+    public User() {
+    }
 
     public User(long id, String name, String email) {
         this.id = id;
@@ -17,12 +20,24 @@ public final class User {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
