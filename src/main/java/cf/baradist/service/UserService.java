@@ -9,10 +9,14 @@ import java.util.Optional;
 
 public class UserService {
     private static UserService instance = new UserService();
-    private UserDao userDao = DaoFactory.getDaoFactory().getUserDao();
+    private UserDao userDao;
 
     public static UserService getInstance() {
         return instance;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     public List<User> getAllUsers() {
