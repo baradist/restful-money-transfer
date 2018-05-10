@@ -10,8 +10,6 @@ public interface UserDao extends Dao {
 
     Optional<User> getUserById(long userId);
 
-    User getUserByName(String userName);
-
     long insert(User user);
 
     void updateUser(Long userId, User user);

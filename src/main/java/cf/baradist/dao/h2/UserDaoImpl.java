@@ -1,5 +1,6 @@
-package cf.baradist.dao;
+package cf.baradist.dao.h2;
 
+import cf.baradist.dao.UserDao;
 import cf.baradist.model.User;
 
 import java.sql.*;
@@ -10,12 +11,12 @@ import java.util.Optional;
 @FunctionalInterface
 public interface UserDaoImpl extends UserDao {
 
-    /*private*/ static final String ID = "id";
-    /*private*/ static final String NAME = "name";
-    /*private*/ static final String EMAIL = "email";
+    String ID = "id";
+    String NAME = "name";
+    String EMAIL = "email";
 
     @Override
-    default public List<User> getAllUsers() {
+    default List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("SELECT id, name, email FROM user");
@@ -32,7 +33,7 @@ public interface UserDaoImpl extends UserDao {
     }
 
     @Override
-    default public Optional<User> getUserById(long userId) {
+    default Optional<User> getUserById(long userId) {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("SELECT id, name, email FROM user WHERE id = ?");
             stmt.setLong(1, userId);
@@ -47,12 +48,7 @@ public interface UserDaoImpl extends UserDao {
     }
 
     @Override
-    default public User getUserByName(String userName) {
-        return null;
-    }
-
-    @Override
-    default public long insert(User user) {
+    default long insert(User user) {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("INSERT INTO user (name, email) VALUES (?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
@@ -71,7 +67,7 @@ public interface UserDaoImpl extends UserDao {
     }
 
     @Override
-    default public void updateUser(Long userId, User user) {
+    default void updateUser(Long userId, User user) {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("UPDATE user SET name = ?, email = ? WHERE id = ?");
             stmt.setString(1, user.getName());
@@ -84,8 +80,8 @@ public interface UserDaoImpl extends UserDao {
     }
 
     @Override
-    default public void deleteUser(long userId) {
-        try (Connection conn = H2DaoFactory.getConnection()) {
+    default void deleteUser(long userId) {
+        try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("DELETE user WHERE id = ?");
             stmt.setLong(1, userId);
             stmt.executeUpdate();

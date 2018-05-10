@@ -1,6 +1,5 @@
 package cf.baradist.service;
 
-import cf.baradist.dao.DaoFactory;
 import cf.baradist.dao.UserDao;
 import cf.baradist.model.User;
 
