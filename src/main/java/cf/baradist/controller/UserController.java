@@ -3,10 +3,7 @@ package cf.baradist.controller;
 import cf.baradist.model.User;
 import cf.baradist.service.UserService;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -21,17 +18,37 @@ public class UserController {
     @GET
     public Response getAllUsers() {
         List<User> users = userService.getAllUsers();
-        GenericEntity<List<User>> genericEntity = new GenericEntity<List<User>>(users) {};
+        GenericEntity<List<User>> genericEntity = new GenericEntity<List<User>>(users) {
+        };
         return Response.ok(genericEntity).build();
     }
 
     @GET
     @Path("{id}")
-    public Response get(@PathParam("id") int id) {
+    public Response get(@PathParam("id") long id) {
         Optional<User> user = userService.getUserById(id);
         if (!user.isPresent()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         return Response.ok(user.get()).build();
+    }
+
+    @POST
+    public Response add(User user) {
+        return Response.ok(userService.addUser(user).get()).build();
+    }
+
+    @PUT
+    @Path("{id}")
+    public Response update(@PathParam("id") long userId, User user) {
+        userService.updateUser(userId, user);
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("{id}")
+    public Response delete(@PathParam("id") long userId) {
+        userService.deleteUser(userId);
+        return Response.ok().build();
     }
 }

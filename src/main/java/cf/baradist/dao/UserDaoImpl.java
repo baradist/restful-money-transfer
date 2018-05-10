@@ -51,7 +51,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public long addUser(User user) {
+    public long insert(User user) {
         try (Connection conn = H2DaoFactory.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("INSERT INTO user (name, email) VALUES (?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
@@ -62,46 +62,33 @@ public class UserDaoImpl implements UserDao {
             if (generatedKeys.next()) {
                 return generatedKeys.getLong(1);
             } else {
-                throw new RuntimeException("addUser(): failed to insert user " + user);
+                throw new RuntimeException("insert(): failed to insert user " + user);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("addUser(): failed to insert user " + user, e);
+            throw new RuntimeException("insert(): failed to insert user " + user, e);
         }
     }
 
     @Override
-    public long updateUser(Long userId, User user) {
+    public void updateUser(Long userId, User user) {
         try (Connection conn = H2DaoFactory.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("UPDATE user SET name = ?, email = ? WHERE id = ?)",
-                    Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement stmt = conn.prepareStatement("UPDATE user SET name = ?, email = ? WHERE id = ?");
             stmt.setString(1, user.getName());
             stmt.setString(2, user.getEmail());
             stmt.setLong(3, userId);
             stmt.executeUpdate();
-            ResultSet generatedKeys = stmt.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                return generatedKeys.getLong(1);
-            } else {
-                throw new RuntimeException("updateUser(): failed to update user " + userId);
-            }
         } catch (SQLException e) {
             throw new RuntimeException("updateUser(): failed to update user " + userId, e);
         }
     }
 
     @Override
-    public long deleteUser(long userId) {
+    public void deleteUser(long userId) {
         try (Connection conn = H2DaoFactory.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("DELETE user WHERE id = ?)",
-                    Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement stmt = conn.prepareStatement("DELETE user WHERE id = ?");
             stmt.setLong(1, userId);
             stmt.executeUpdate();
-            ResultSet generatedKeys = stmt.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                return generatedKeys.getLong(1);
-            } else {
-                throw new RuntimeException("updateUser(): failed to update user " + userId);
-            }
+            stmt.getGeneratedKeys();
         } catch (SQLException e) {
             throw new RuntimeException("updateUser(): failed to update user " + userId, e);
         }

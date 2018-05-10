@@ -12,9 +12,9 @@ public interface UserDao {
 
     User getUserByName(String userName);
 
-    long addUser(User user);
+    long insert(User user);
 
-    long updateUser(Long userId, User user);
+    void updateUser(Long userId, User user);
 
-    long deleteUser(long userId);
+    void deleteUser(long userId);
 }
