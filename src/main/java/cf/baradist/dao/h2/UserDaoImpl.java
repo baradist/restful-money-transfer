@@ -1,5 +1,6 @@
-package cf.baradist.dao;
+package cf.baradist.dao.h2;
 
+import cf.baradist.dao.UserDao;
 import cf.baradist.model.User;
 
 import java.sql.*;
@@ -7,16 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserDaoImpl implements UserDao {
+@FunctionalInterface
+public interface UserDaoImpl extends UserDao {
 
-    private static final String ID = "id";
-    private static final String NAME = "name";
-    private static final String EMAIL = "email";
+    String ID = "id";
+    String NAME = "name";
+    String EMAIL = "email";
 
     @Override
-    public List<User> getAllUsers() {
+    default List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-        try (Connection conn = H2DaoFactory.getConnection()) {
+        try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("SELECT id, name, email FROM user");
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -31,8 +33,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Optional<User> getUserById(long userId) {
-        try (Connection conn = H2DaoFactory.getConnection()) {
+    default Optional<User> getUserById(long userId) {
+        try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("SELECT id, name, email FROM user WHERE id = ?");
             stmt.setLong(1, userId);
             ResultSet rs = stmt.executeQuery();
@@ -46,13 +48,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getUserByName(String userName) {
-        return null;
-    }
-
-    @Override
-    public long insert(User user) {
-        try (Connection conn = H2DaoFactory.getConnection()) {
+    default long insert(User user) {
+        try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("INSERT INTO user (name, email) VALUES (?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, user.getName());
@@ -70,8 +67,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void updateUser(Long userId, User user) {
-        try (Connection conn = H2DaoFactory.getConnection()) {
+    default void updateUser(Long userId, User user) {
+        try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("UPDATE user SET name = ?, email = ? WHERE id = ?");
             stmt.setString(1, user.getName());
             stmt.setString(2, user.getEmail());
@@ -83,8 +80,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void deleteUser(long userId) {
-        try (Connection conn = H2DaoFactory.getConnection()) {
+    default void deleteUser(long userId) {
+        try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("DELETE user WHERE id = ?");
             stmt.setLong(1, userId);
             stmt.executeUpdate();

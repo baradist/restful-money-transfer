@@ -1,6 +1,5 @@
 package cf.baradist.service;
 
-import cf.baradist.dao.DaoFactory;
 import cf.baradist.dao.UserDao;
 import cf.baradist.model.User;
 
@@ -9,10 +8,14 @@ import java.util.Optional;
 
 public class UserService {
     private static UserService instance = new UserService();
-    private UserDao userDao = DaoFactory.getDaoFactory().getUserDao();
+    private UserDao userDao;
 
     public static UserService getInstance() {
         return instance;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     public List<User> getAllUsers() {
