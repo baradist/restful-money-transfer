@@ -9,6 +9,11 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
 def jettyVersion = '9.4.10.v20180503'
 def jerseyVersion = '2.27'
 
@@ -29,5 +34,24 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.18.3'
+}
 
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/integrationTest/java')
+        }
+        resources {
+            srcDir "${projectDir}/src/integrationTest/resources"
+        }
+    }
+}
+
+task integrationTest(type: Test) {
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    outputs.upToDateWhen { false }
+    systemProperties System.getProperties()
 }

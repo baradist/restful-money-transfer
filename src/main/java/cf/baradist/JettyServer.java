@@ -21,7 +21,7 @@ import java.util.Properties;
 public class JettyServer {
 
     public static final String PROPERTIES_FILE = "src/main/resources/application.properties";
-    public static final String INIT_SQL = "src/main/resources/init.sql";
+    public static final String INIT_SQL = "src/integrationTest/resources/init.sql";
     public static final String DS_URL = "datasource.url";
     public static final String DS_USER = "datasource.username";
     public static final String DS_PASSWORD = "datasource.password";
@@ -29,7 +29,7 @@ public class JettyServer {
     private static Properties properties;
 
     public static void main(String[] args) throws Exception {
-        properties = readProperties();
+        properties = readProperties(PROPERTIES_FILE);
         configureDb();
         runServer();
     }
@@ -69,15 +69,15 @@ public class JettyServer {
         }
     }
 
-    private static Properties readProperties() {
+    public static Properties readProperties(String propertiesFileName) {
         FileInputStream fis;
         Properties props = new Properties();
 
         try {
-            fis = new FileInputStream(PROPERTIES_FILE);
+            fis = new FileInputStream(propertiesFileName);
             props.load(fis);
         } catch (IOException e) {
-            throw new RuntimeException("Can't find a file " + PROPERTIES_FILE, e);
+            throw new RuntimeException("Can't find a file " + propertiesFileName, e);
         }
         return props;
     }
@@ -88,7 +88,7 @@ public class JettyServer {
         } catch (SQLException e) {
             throw new RuntimeException("fillTestData(): ", e);
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("fillTestData(): can't find a file \"src/main/resources/init.sql\"", e);
+            throw new RuntimeException("fillTestData(): can't find a file " + INIT_SQL, e);
         }
     }
 }
