@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.Optional;
 
 @FunctionalInterface
-public interface UserDaoImpl extends UserDao {
+public interface H2UserDaoImpl extends UserDao {
 
     String ID = "id";
     String NAME = "name";
     String EMAIL = "email";
 
     @Override
-    default List<User> getAllUsers() {
+    default List<User> getAll() {
         List<User> users = new ArrayList<>();
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("SELECT id, name, email FROM user");
@@ -33,22 +33,22 @@ public interface UserDaoImpl extends UserDao {
     }
 
     @Override
-    default Optional<User> getUserById(long userId) {
+    default Optional<User> getById(Long id) {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("SELECT id, name, email FROM user WHERE id = ?");
-            stmt.setLong(1, userId);
+            stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
             return Optional.ofNullable(!rs.next() ? null :
-                    new User(userId,
+                    new User(id,
                             rs.getString("name"),
                             rs.getString("email")));
         } catch (SQLException e) {
-            throw new RuntimeException("Can't read user with id = " + userId, e);
+            throw new RuntimeException("Can't read user with id = " + id, e);
         }
     }
 
     @Override
-    default long insert(User user) {
+    default Long insert(User user) {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("INSERT INTO user (name, email) VALUES (?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
@@ -67,27 +67,27 @@ public interface UserDaoImpl extends UserDao {
     }
 
     @Override
-    default void updateUser(Long userId, User user) {
+    default void update(Long id, User user) {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("UPDATE user SET name = ?, email = ? WHERE id = ?");
             stmt.setString(1, user.getName());
             stmt.setString(2, user.getEmail());
-            stmt.setLong(3, userId);
+            stmt.setLong(3, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("updateUser(): failed to update user " + userId, e);
+            throw new RuntimeException("update(): failed to update user " + id, e);
         }
     }
 
     @Override
-    default void deleteUser(long userId) {
+    default void delete(Long id) {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("DELETE user WHERE id = ?");
-            stmt.setLong(1, userId);
+            stmt.setLong(1, id);
             stmt.executeUpdate();
             stmt.getGeneratedKeys();
         } catch (SQLException e) {
-            throw new RuntimeException("updateUser(): failed to update user " + userId, e);
+            throw new RuntimeException("delete(): failed to delete user " + id, e);
         }
     }
 }

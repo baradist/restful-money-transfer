@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserDao extends Dao {
-    List<User> getAllUsers();
+    List<User> getAll();
 
-    Optional<User> getUserById(long userId);
+    Optional<User> getById(Long id);
 
-    long insert(User user);
+    Long insert(User user);
 
-    void updateUser(Long userId, User user);
+    void update(Long id, User user);
 
-    void deleteUser(long userId);
+    void delete(Long id);
 }

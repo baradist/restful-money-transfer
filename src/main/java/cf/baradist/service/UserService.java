@@ -19,11 +19,11 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        return userDao.getAllUsers();
+        return userDao.getAll();
     }
 
-    public Optional<User> getUserById(long userId) {
-        return userDao.getUserById(userId);
+    public Optional<User> getUserById(Long userId) {
+        return userDao.getById(userId);
     }
 
     public Optional<User> addUser(User user) {
@@ -32,11 +32,11 @@ public class UserService {
         return Optional.of(user);
     }
 
-    public void updateUser(long userId, User user) {
-        userDao.updateUser(userId, user);
+    public void updateUser(Long userId, User user) {
+        userDao.update(userId, user);
     }
 
-    public void deleteUser(long userId) {
-        userDao.deleteUser(userId);
+    public void deleteUser(Long userId) {
+        userDao.delete(userId);
     }
 }
