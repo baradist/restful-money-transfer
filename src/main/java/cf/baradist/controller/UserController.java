@@ -25,7 +25,7 @@ public class UserController {
 
     @GET
     @Path("{id}")
-    public Response get(@PathParam("id") long id) {
+    public Response get(@PathParam("id") Long id) {
         Optional<User> user = userService.getUserById(id);
         if (!user.isPresent()) {
             return Response.status(Response.Status.NOT_FOUND).build();

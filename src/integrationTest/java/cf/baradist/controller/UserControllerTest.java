@@ -1,10 +1,9 @@
 package cf.baradist.controller;
 
-import cf.baradist.dao.h2.UserDaoImpl;
+import cf.baradist.dao.h2.H2UserDaoImpl;
 import cf.baradist.model.User;
 import cf.baradist.service.UserService;
 import org.h2.jdbcx.JdbcDataSource;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -71,7 +70,7 @@ public class UserControllerTest {
         ds.setURL(properties.getProperty(DS_URL, "jdbc:h2:mem:moneytransfer;DB_CLOSE_DELAY=-1"));
         ds.setUser(properties.getProperty(DS_USER, "sa"));
         ds.setPassword(properties.getProperty(DS_PASSWORD, "sa"));
-        UserService.getInstance().setUserDao((UserDaoImpl) ds::getConnection);
+        UserService.getInstance().setUserDao((H2UserDaoImpl) ds::getConnection);
 
         fillTestData(ds);
     }

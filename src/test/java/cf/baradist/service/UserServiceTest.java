@@ -4,59 +4,71 @@ import cf.baradist.dao.UserDao;
 import cf.baradist.model.User;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class UserServiceTest {
 
-    private UserService userService;
+    @Mock
     private UserDao userDao;
+
+    private UserService userService;
     private User user;
 
     @Before
     public void setUp() throws Exception {
-        userService = new UserService();
-        userService.setUserDao(userDao = mock(UserDao.class));
+        MockitoAnnotations.initMocks(this);
 
-        user = new User(1l, "Name1", "Email1");
+        userService = new UserService();
+        userService.setUserDao(userDao);
+
+        user = new User(1L, "Name1", "Email1");
     }
 
     @Test
     public void getAllUsersTest() {
-        List<User> users = Arrays.asList(new User(0l, "Name", "Email"),
-                new User(1l, "Name1", "Email1"),
-                new User(2l, "Name2", "Email2"));
-        when(userDao.getAllUsers()).thenReturn(users);
-        assertEquals(users, userService.getAllUsers());
+        List<User> users = new ArrayList<User>() {
+            {
+                add(user);
+                add(new User(2L, "Name2", "Email2"));
+                add(new User(3L, "Name3", "Email3"));
+            }
+        };
+        when(userDao.getAll()).thenReturn(users);
+        assertThat(userService.getAllUsers(), is(users));
     }
 
     @Test
     public void getUserByIdTest() {
-        when(userDao.getUserById(1)).thenReturn(Optional.of(user));
-        assertEquals(user, userService.getUserById(1).get());
+        when(userDao.getById(1L)).thenReturn(Optional.of(user));
+        assertThat(userService.getUserById(1L).get(), is(user));
     }
 
     @Test
     public void addUserTest() {
-        when(userDao.insert(user)).thenReturn(0l);
-        User user1 = new User(0l, "Name1", "Email1");
-        assertEquals(user1, userService.addUser(user).get());
+        when(userDao.insert(user)).thenReturn(4L);
+        User user1 = new User(4L, "Name1", "Email1");
+        assertThat(userService.addUser(user).get(), is(user1));
     }
 
     @Test
     public void updateUserTest() {
-        userService.updateUser(0l, user);
-        verify(userDao).updateUser(0l, user);
+        userService.updateUser(0L, user);
+        verify(userDao).update(0L, user);
     }
 
     @Test
     public void deleteUserTest() {
-        userService.deleteUser(0l);
-        verify(userDao).deleteUser(0l);
+        userService.deleteUser(0L);
+        verify(userDao).delete(0L);
     }
 }

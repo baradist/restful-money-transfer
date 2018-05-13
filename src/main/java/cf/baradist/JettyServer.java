@@ -1,8 +1,13 @@
 package cf.baradist;
 
-import cf.baradist.controller.EntryPoint;
+import cf.baradist.controller.AccountController;
 import cf.baradist.controller.UserController;
-import cf.baradist.dao.h2.UserDaoImpl;
+import cf.baradist.dao.AccountDao;
+import cf.baradist.dao.DaoHandler;
+import cf.baradist.dao.UserDao;
+import cf.baradist.model.Account;
+import cf.baradist.model.User;
+import cf.baradist.service.AccountService;
 import cf.baradist.service.UserService;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -39,7 +44,9 @@ public class JettyServer {
         ds.setURL(properties.getProperty(DS_URL, "jdbc:h2:mem:moneytransfer;DB_CLOSE_DELAY=-1"));
         ds.setUser(properties.getProperty(DS_USER, "sa"));
         ds.setPassword(properties.getProperty(DS_PASSWORD, "sa"));
-        UserService.getInstance().setUserDao((UserDaoImpl) ds::getConnection);
+        DaoHandler.initDaos(ds);
+        UserService.getInstance().setUserDao((UserDao) DaoHandler.getDaoByClass(User.class));
+        AccountService.getInstance().setAccountDao((AccountDao) DaoHandler.getDaoByClass(Account.class));
 
         fillTestData(ds);
     }
@@ -58,8 +65,8 @@ public class JettyServer {
         // Tells the Jersey Servlet which REST service/class to load.
         jerseyServlet.setInitParameter(
                 "jersey.config.server.provider.classnames",
-                EntryPoint.class.getCanonicalName() + "," +
-                        UserController.class.getCanonicalName());
+                UserController.class.getCanonicalName() + "," +
+                        AccountController.class.getCanonicalName());
 
         try {
             jettyServer.start();
