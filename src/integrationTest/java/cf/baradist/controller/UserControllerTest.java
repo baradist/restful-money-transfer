@@ -1,29 +1,25 @@
 package cf.baradist.controller;
 
-import cf.baradist.dao.h2.H2UserDaoImpl;
+import cf.baradist.AbstractTest;
 import cf.baradist.model.User;
-import cf.baradist.service.UserService;
-import org.h2.jdbcx.JdbcDataSource;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-import static cf.baradist.JettyServer.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-public class UserControllerTest {
+public class UserControllerTest extends AbstractTest {
     private UserController controller;
 
     @Before
     public void setUp() throws Exception {
+        super.setUp();
         controller = new UserController();
-        configureDb();
     }
 
     @Test
@@ -42,12 +38,21 @@ public class UserControllerTest {
     public void get() {
         Response response = controller.get(1L);
         assertThat(response.getEntity(), is(new User(1L, "John", "john_doe@gmail.com")));
+        assertThat(response.getStatusInfo(), is(Response.Status.OK));
+    }
+
+    @Test
+    public void getNotExisting() {
+        Response response = controller.get(77L);
+        assertNull(response.getEntity());
+        assertThat(response.getStatusInfo(), is(Response.Status.NOT_FOUND));
     }
 
     @Test
     public void add() {
         Response response = controller.add(new User(0L, "NewUser", "AnEmailOfANewUser@mail.com"));
         assertThat(response.getEntity(), is(new User(4L, "NewUser", "AnEmailOfANewUser@mail.com")));
+        assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
     @Test
@@ -55,6 +60,7 @@ public class UserControllerTest {
         controller.update(1L, new User(0L, "NewNameOfAnOldUser", "email@mail.com"));
         Response response = controller.get(1L);
         assertThat(response.getEntity(), is(new User(1L, "NewNameOfAnOldUser", "email@mail.com")));
+        assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
     @Test
@@ -62,16 +68,6 @@ public class UserControllerTest {
         controller.delete(1L);
         Response response = controller.get(1L);
         assertNull(response.getEntity());
-    }
-
-    private static void configureDb() {
-        Properties properties = readProperties(INIT_SQL);
-        JdbcDataSource ds = new JdbcDataSource();
-        ds.setURL(properties.getProperty(DS_URL, "jdbc:h2:mem:moneytransfer;DB_CLOSE_DELAY=-1"));
-        ds.setUser(properties.getProperty(DS_USER, "sa"));
-        ds.setPassword(properties.getProperty(DS_PASSWORD, "sa"));
-        UserService.getInstance().setUserDao((H2UserDaoImpl) ds::getConnection);
-
-        fillTestData(ds);
+        assertThat(response.getStatusInfo(), is(Response.Status.NOT_FOUND));
     }
 }
