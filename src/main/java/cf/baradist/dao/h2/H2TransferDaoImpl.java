@@ -3,7 +3,11 @@ package cf.baradist.dao.h2;
 import cf.baradist.dao.TransferDao;
 import cf.baradist.model.Transfer;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -141,14 +145,14 @@ public interface H2TransferDaoImpl extends TransferDao {
 
             PreparedStatement stmtDecreaseFrom = conn.prepareStatement(
                     "UPDATE account SET balance = balance - ? WHERE id = ?");
-            stmtDecreaseFrom.setLong(2, transfer.getFromAccountId());
             stmtDecreaseFrom.setBigDecimal(1, transfer.getAmount());
+            stmtDecreaseFrom.setLong(2, transfer.getFromAccountId());
             stmtDecreaseFrom.executeUpdate();
 
             PreparedStatement stmtIncreaseTo = conn.prepareStatement(
                     "UPDATE account SET balance = balance + ? WHERE id = ?");
             stmtIncreaseTo.setBigDecimal(1, transfer.getAmount());
-            stmtIncreaseTo.setLong(2, transfer.getFromAccountId());
+            stmtIncreaseTo.setLong(2, transfer.getToAccountId());
             stmtIncreaseTo.executeUpdate();
 
             conn.commit();
