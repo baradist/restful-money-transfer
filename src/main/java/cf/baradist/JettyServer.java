@@ -1,6 +1,7 @@
 package cf.baradist;
 
 import cf.baradist.controller.AccountController;
+import cf.baradist.controller.TransferController;
 import cf.baradist.controller.UserController;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -33,6 +34,7 @@ public class JettyServer {
         jerseyServlet.setInitParameter(
                 "jersey.config.server.provider.classnames",
                 UserController.class.getCanonicalName() + "," +
+                        TransferController.class.getCanonicalName() + "," +
                         AccountController.class.getCanonicalName());
 
         try {

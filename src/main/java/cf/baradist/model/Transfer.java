@@ -1,8 +1,10 @@
 package cf.baradist.model;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class Transfer {
+    private Long id;
     private int currencyCode;
     private BigDecimal amount;
     private Long fromAccountId;
@@ -11,11 +13,20 @@ public class Transfer {
     public Transfer() {
     }
 
-    public Transfer(int currencyCode, BigDecimal amount, Long fromAccountId, Long toAccountId) {
+    public Transfer(Long id, int currencyCode, BigDecimal amount, Long fromAccountId, Long toAccountId) {
+        this.id = id;
         this.currencyCode = currencyCode;
         this.amount = amount;
         this.fromAccountId = fromAccountId;
         this.toAccountId = toAccountId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public int getCurrencyCode() {
@@ -56,7 +67,8 @@ public class Transfer {
         if (o == null || getClass() != o.getClass()) return false;
 
         Transfer transfer = (Transfer) o;
-        return currencyCode == transfer.currencyCode &&
+        return id.equals(transfer.id) &&
+                currencyCode == transfer.currencyCode &&
                 amount.equals(transfer.amount) &&
                 fromAccountId.equals(transfer.fromAccountId) &&
                 toAccountId.equals(transfer.toAccountId);
@@ -64,17 +76,14 @@ public class Transfer {
 
     @Override
     public int hashCode() {
-        int result = currencyCode;
-        result = 31 * result + amount.hashCode();
-        result = 31 * result + fromAccountId.hashCode();
-        result = 31 * result + toAccountId.hashCode();
-        return result;
+        return Objects.hash(id, currencyCode, amount, fromAccountId, toAccountId);
     }
 
     @Override
     public String toString() {
         return "Transfer{" +
-                "fromAccountId=" + fromAccountId +
+                "id=" + id +
+                ", fromAccountId=" + fromAccountId +
                 ", toAccountId=" + toAccountId +
                 ", currencyCode=" + currencyCode +
                 ", amount=" + amount +

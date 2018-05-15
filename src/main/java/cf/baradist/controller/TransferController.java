@@ -3,22 +3,27 @@ package cf.baradist.controller;
 import cf.baradist.model.Transfer;
 import cf.baradist.service.TransferService;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Optional;
 
 @Path("/transfer")
 @Produces(MediaType.APPLICATION_JSON)
 public class TransferController {
     private TransferService transferService = TransferService.getInstance();
+
+    @GET
+    @Path("/{id}")
+    public Response get(@PathParam("id") Long id) {
+        Optional<Transfer> user = transferService.getById(id);
+        if (!user.isPresent()) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok(user.get()).build();
+    }
 
     @GET
     public Response getAllTransfers() {
@@ -30,8 +35,8 @@ public class TransferController {
 
     @GET
     @Path("/from/{fromAccountId}")
-    public Response getTransferByFromAccountId(@PathParam("fromAccountId") Long fromAccountId) {
-        List<Transfer> transfers = transferService.getTransferByFromAccountId(fromAccountId);
+    public Response getTransfersByFromAccountId(@PathParam("fromAccountId") Long fromAccountId) {
+        List<Transfer> transfers = transferService.getTransfersByFromAccountId(fromAccountId);
         GenericEntity<List<Transfer>> genericEntity = new GenericEntity<List<Transfer>>(transfers) {
         };
         return Response.ok(genericEntity).build();
@@ -39,8 +44,8 @@ public class TransferController {
 
     @GET
     @Path("/to/{toAccountId}")
-    public Response getTransferByToAccountId(@PathParam("toAccountId") Long toAccountId) {
-        List<Transfer> transfers = transferService.getTransferByToAccountId(toAccountId);
+    public Response getTransfersByToAccountId(@PathParam("toAccountId") Long toAccountId) {
+        List<Transfer> transfers = transferService.getTransfersByToAccountId(toAccountId);
         GenericEntity<List<Transfer>> genericEntity = new GenericEntity<List<Transfer>>(transfers) {
         };
         return Response.ok(genericEntity).build();
@@ -48,9 +53,9 @@ public class TransferController {
 
     @GET
     @Path("/from/{fromAccountId}/to/{toAccountId}")
-    public Response getTransferByFromAccountIdAndToAccountId(
+    public Response getTransfersByFromAccountIdAndToAccountId(
             @PathParam("fromAccountId") Long fromAccountId, @PathParam("toAccountId") Long toAccountId) {
-        List<Transfer> transfers = transferService.getTransferByFromAccountIdAndToAccountId(fromAccountId, toAccountId);
+        List<Transfer> transfers = transferService.getTransfersByFromAccountIdAndToAccountId(fromAccountId, toAccountId);
         GenericEntity<List<Transfer>> genericEntity = new GenericEntity<List<Transfer>>(transfers) {
         };
         return Response.ok(genericEntity).build();
@@ -61,17 +66,10 @@ public class TransferController {
         return Response.ok(transferService.addTransfer(transfer).get()).build();
     }
 
-    @PUT
-    @Path("{id}")
-    public Response update(@PathParam("id") Long transferId, Transfer transfer) {
-        transferService.updateTransfer(transferId, transfer);
-        return Response.ok().build();
-    }
-
     @DELETE
     @Path("{id}")
     public Response delete(@PathParam("id") Long transferId) {
-        transferService.deleteTransfer(transferId);
+        transferService.rollbackTransfer(transferId);
         return Response.ok().build();
     }
 }
