@@ -1,11 +1,11 @@
 package cf.baradist;
 
-import cf.baradist.controller.AccountController;
-import cf.baradist.controller.TransferController;
-import cf.baradist.controller.UserController;
+import io.swagger.jaxrs.config.DefaultJaxrsConfig;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.server.ServerProperties;
+import org.glassfish.jersey.servlet.ServletContainer;
 
 public class JettyServer {
 
@@ -21,21 +21,22 @@ public class JettyServer {
 
     private static void runServer() throws Exception {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setContextPath(Configurer.getProperties().getProperty(DATA_REST_BASE_PATH, "/"));
+        context.setContextPath("/");
 
         Server jettyServer = new Server(Integer.parseInt(Configurer.getProperties().getProperty(DATA_REST_PORT, "80")));
         jettyServer.setHandler(context);
 
-        ServletHolder jerseyServlet = context.addServlet(
-                org.glassfish.jersey.servlet.ServletContainer.class, "/*");
-        jerseyServlet.setInitOrder(0);
+        // Setup API resources
+        ServletHolder apiServlet = context.addServlet(ServletContainer.class,
+                Configurer.getProperties().getProperty(DATA_REST_BASE_PATH, "/api/*"));
+        apiServlet.setInitOrder(1);
+        apiServlet.setInitParameter(ServerProperties.PROVIDER_PACKAGES,
+                "cf.baradist.controller;io.swagger.jaxrs.json;io.swagger.jaxrs.listing");
 
-        // Tells the Jersey Servlet which REST service/class to load.
-        jerseyServlet.setInitParameter(
-                "jersey.config.server.provider.classnames",
-                UserController.class.getCanonicalName() + "," +
-                        TransferController.class.getCanonicalName() + "," +
-                        AccountController.class.getCanonicalName());
+        // Setup Swagger servlet
+        ServletHolder swaggerServlet = context.addServlet(DefaultJaxrsConfig.class, "/swagger-core");
+        swaggerServlet.setInitOrder(2);
+        swaggerServlet.setInitParameter("api.version", "1.0.0");
 
         try {
             jettyServer.start();
