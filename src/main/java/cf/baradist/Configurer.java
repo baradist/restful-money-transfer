@@ -22,7 +22,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class Configurer {
-    private static final String INIT_SQL = "src/integrationTest/resources/init.sql";
+    private static final String INIT_SQL = "src/main/resources/init.sql";
     private static final String DS_URL = "datasource.url";
     private static final String DS_USER = "datasource.username";
     private static final String DS_PASSWORD = "datasource.password";
