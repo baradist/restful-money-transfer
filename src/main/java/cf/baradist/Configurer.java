@@ -2,10 +2,13 @@ package cf.baradist;
 
 import cf.baradist.dao.AccountDao;
 import cf.baradist.dao.DaoHandler;
+import cf.baradist.dao.TransferDao;
 import cf.baradist.dao.UserDao;
 import cf.baradist.model.Account;
+import cf.baradist.model.Transfer;
 import cf.baradist.model.User;
 import cf.baradist.service.AccountService;
+import cf.baradist.service.TransferService;
 import cf.baradist.service.UserService;
 import org.h2.jdbcx.JdbcDataSource;
 import org.h2.tools.RunScript;
@@ -38,6 +41,8 @@ public class Configurer {
         DaoHandler.initDaos(ds);
         UserService.getInstance().setUserDao((UserDao) DaoHandler.getDaoByClass(User.class));
         AccountService.getInstance().setAccountDao((AccountDao) DaoHandler.getDaoByClass(Account.class));
+        TransferService.getInstance().setTransferDao((TransferDao) DaoHandler.getDaoByClass(Transfer.class));
+        TransferService.getInstance().setAccountDao((AccountDao) DaoHandler.getDaoByClass(Account.class));
 
         fillTestData(ds);
     }

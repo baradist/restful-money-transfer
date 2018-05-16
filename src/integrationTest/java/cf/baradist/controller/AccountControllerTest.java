@@ -28,14 +28,14 @@ public class AccountControllerTest extends AbstractTest {
     }
 
     @Test
-    public void getAllAccounts() {
+    public void getAllAccountsByUserId() {
         List<Account> accounts = new ArrayList<Account>() {
             {
                 add(new Account(1L, 1L, new BigDecimal("77.70"), USD));
                 add(new Account(2L, 1L, new BigDecimal("0.00"), USD));
                 add(new Account(3L, 2L, new BigDecimal("77.70"), USD));
                 add(new Account(4L, 2L, new BigDecimal("42.30"), EUR));
-                add(new Account(5L, 3L, new BigDecimal("77.70"), USD));
+                add(new Account(5L, 3L, new BigDecimal("77.70"), EUR));
             }
         };
 

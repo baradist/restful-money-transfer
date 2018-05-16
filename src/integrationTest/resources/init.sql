@@ -47,7 +47,33 @@ ALTER TABLE account
 REFERENCES currency (iso4217_code);
 
 INSERT INTO account (userId, balance, currency) VALUES (1, 77.7, 840);
-INSERT INTO account (userId, balance, currency) VALUES (1, 0, 840);
+INSERT INTO account (userId, balance, currency) VALUES (1, 0.0, 840);
 INSERT INTO account (userId, balance, currency) VALUES (2, 77.7, 840);
 INSERT INTO account (userId, balance, currency) VALUES (2, 42.3, 978);
-INSERT INTO account (userId, balance, currency) VALUES (3, 77.7, 840);
+INSERT INTO account (userId, balance, currency) VALUES (3, 77.7, 978);
+
+
+DROP TABLE IF EXISTS transfer;
+
+CREATE TABLE transfer (
+  id LONG PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  currency SMALLINT NOT NULL,
+  amount DECIMAL(17, 2) DEFAULT 0 NOT NULL,
+  fromAccountId LONG NOT NULL,
+  toAccountId LONG NOT NULL
+);
+
+ALTER TABLE transfer
+  ADD FOREIGN KEY (fromAccountId)
+REFERENCES account (id) ON DELETE CASCADE;
+
+ALTER TABLE transfer
+  ADD FOREIGN KEY (toAccountId)
+REFERENCES account (id) ON DELETE CASCADE;
+
+ALTER TABLE transfer
+  ADD FOREIGN KEY (currency)
+REFERENCES currency (iso4217_code) ON DELETE CASCADE;
+
+INSERT INTO transfer (currency, amount, fromAccountId, toAccountId) VALUES (840, 77.7, 3, 1);
+INSERT INTO transfer (currency, amount, fromAccountId, toAccountId) VALUES (978, 5.5, 4, 5);

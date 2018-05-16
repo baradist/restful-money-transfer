@@ -40,8 +40,8 @@ public interface H2UserDaoImpl extends UserDao {
             ResultSet rs = stmt.executeQuery();
             return Optional.ofNullable(!rs.next() ? null :
                     new User(id,
-                            rs.getString("name"),
-                            rs.getString("email")));
+                            rs.getString(NAME),
+                            rs.getString(EMAIL)));
         } catch (SQLException e) {
             throw new RuntimeException("Can't read user with id = " + id, e);
         }
