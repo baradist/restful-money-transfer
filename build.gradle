@@ -22,17 +22,19 @@ dependencies {
     compile "org.eclipse.jetty:jetty-server:${jettyVersion}"
     compile "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
 
-    // Jersey
-    compile "org.glassfish.jersey.core:jersey-server:${jerseyVersion}"
-    compile "org.glassfish.jersey.inject:jersey-hk2:${jerseyVersion}"
     compile "org.glassfish.jersey.containers:jersey-container-servlet-core:${jerseyVersion}"
-    compile "org.glassfish.jersey.containers:jersey-container-jetty-http:${jerseyVersion}"
+    compile "org.glassfish.jersey.media:jersey-media-multipart:${jerseyVersion}"
     compile "org.glassfish.jersey.media:jersey-media-moxy:${jerseyVersion}"
+    compile "org.glassfish.jersey.inject:jersey-hk2:${jerseyVersion}"
+    compile 'javax.servlet:servlet-api:2.5'
+    compile 'io.swagger:swagger-jersey2-jaxrs:1.5.10'
 
     compile 'com.h2database:h2:1.4.197'
-    compile 'commons-dbutils:commons-dbutils:1.6'
 
-    testCompile 'junit:junit:4.12'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version:'1.0.1'
+    compile group: 'ch.qos.logback', name: 'logback-core', version:'1.0.1'
+
+    testCompile 'junit:junit:4.8.1'
     testCompile 'org.mockito:mockito-core:2.18.3'
 }
 

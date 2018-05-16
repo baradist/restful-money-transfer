@@ -1,7 +1,10 @@
 package cf.baradist.model;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 
+@XmlRootElement(name = "User")
 public class User {
     private long id;
     private String name;
@@ -16,6 +19,7 @@ public class User {
         this.email = email;
     }
 
+    @XmlElement(name = "id")
     public long getId() {
         return id;
     }
@@ -24,6 +28,7 @@ public class User {
         this.id = id;
     }
 
+    @XmlElement(name = "name")
     public String getName() {
         return name;
     }
@@ -32,6 +37,7 @@ public class User {
         this.name = name;
     }
 
+    @XmlElement(name = "email")
     public String getEmail() {
         return email;
     }
