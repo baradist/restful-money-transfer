@@ -13,19 +13,15 @@ import cf.baradist.service.UserService;
 import org.h2.jdbcx.JdbcDataSource;
 import org.h2.tools.RunScript;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Properties;
 
 public class Configurer {
-    private static final String INIT_SQL = "src/main/resources/init.sql";
+    private static final String INIT_SQL = "init.sql";
     private static final String DS_URL = "jdbc:h2:mem:moneytransfer;DB_CLOSE_DELAY=-1";
     private static final String DS_USER = "sa";
     private static final String DS_PASSWORD = "sa";
-
-    private static Properties properties;
 
     public static void configureDb() {
         JdbcDataSource ds = new JdbcDataSource();
@@ -45,12 +41,9 @@ public class Configurer {
 
     private static void fillTestData(JdbcDataSource ds) {
         try (Connection conn = ds.getConnection()) {
-            RunScript.execute(conn, new FileReader(INIT_SQL));
+            RunScript.execute(conn, new InputStreamReader(Configurer.class.getResourceAsStream("/" + INIT_SQL)));
         } catch (SQLException e) {
             throw new RuntimeException("fillTestData(): ", e);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("fillTestData(): can't find a file " + INIT_SQL, e);
         }
     }
-
 }
