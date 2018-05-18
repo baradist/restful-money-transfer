@@ -35,6 +35,7 @@ public class JettyServer {
         ServletHolder swaggerServlet = context.addServlet(DefaultJaxrsConfig.class, "/swagger-core");
         swaggerServlet.setInitOrder(2);
         swaggerServlet.setInitParameter("api.version", "1.0.0");
+        swaggerServlet.setInitParameter("swagger.api.basepath", "/api");
 
         // Lastly, the default servlet for root content (always needed, to satisfy servlet spec)
         // It is important that this is last.
