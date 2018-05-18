@@ -5,12 +5,7 @@ import cf.baradist.service.TransferService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -18,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Path("/transfer")
-@Api(value = "/transfer", description = "Operations about money transfers")
+@Api(value = "transfer", description = "Operations about money transfers")
 @Produces(MediaType.APPLICATION_JSON)
 public class TransferController {
     private TransferService transferService = TransferService.getInstance();
