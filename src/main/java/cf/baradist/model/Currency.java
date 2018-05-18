@@ -1,7 +1,10 @@
 package cf.baradist.model;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 
+@XmlRootElement(name = "Account")
 public class Currency {
     private int iso4217_code;
     private String iso4217_symcode;
@@ -22,6 +25,7 @@ public class Currency {
         this.name = that.name;
     }
 
+    @XmlElement(name = "iso4217_code")
     public int getIso4217_code() {
         return iso4217_code;
     }
@@ -30,6 +34,7 @@ public class Currency {
         this.iso4217_code = iso4217_code;
     }
 
+    @XmlElement(name = "iso4217_symcode")
     public String getIso4217_symcode() {
         return iso4217_symcode;
     }
@@ -38,6 +43,7 @@ public class Currency {
         this.iso4217_symcode = iso4217_symcode;
     }
 
+    @XmlElement(name = "name")
     public String getName() {
         return name;
     }

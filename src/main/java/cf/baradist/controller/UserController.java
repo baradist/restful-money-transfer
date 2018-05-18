@@ -13,15 +13,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Path("/user")
-@Api(value = "/user", description = "Operations about user")
+@Api(value = "user", description = "Operations about user")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class UserController {
     private UserService userService = UserService.getInstance();
 
     @GET
     @ApiOperation(value = "Get all users",
-            notes = "Returns the whole list of users",
-            position = 1)
+            notes = "Returns the whole list of users")
     public Response getAllUsers() {
         List<User> users = userService.getAllUsers();
         GenericEntity<List<User>> genericEntity = new GenericEntity<List<User>>(users) {
@@ -32,8 +31,7 @@ public class UserController {
     @GET
     @Path("{id}")
     @ApiOperation(value = "Get user by ID",
-            notes = "Gets a user by a given ID",
-            position = 2)
+            notes = "Gets a user by a given ID")
     public Response get(@PathParam("id") Long id) {
         Optional<User> user = userService.getUserById(id);
         return user.map(u ->
@@ -43,8 +41,7 @@ public class UserController {
 
     @POST
     @ApiOperation(value = "Create user",
-            notes = "Creates a new user",
-            position = 3)
+            notes = "Creates a new user")
     public Response add(User user) {
         return Response.ok(userService.addUser(user).get()).build();
     }
@@ -52,8 +49,7 @@ public class UserController {
     @PUT
     @Path("{id}")
     @ApiOperation(value = "Update user",
-            notes = "Updates fields of a user with a given ID",
-            position = 4)
+            notes = "Updates fields of a user with a given ID")
     public Response update(@PathParam("id") long userId, User user) {
         userService.updateUser(userId, user);
         return Response.ok().build();
@@ -62,8 +58,7 @@ public class UserController {
     @DELETE
     @Path("{id}")
     @ApiOperation(value = "Delete user",
-            notes = "Removes a user with a given ID",
-            position = 5)
+            notes = "Removes a user with a given ID")
     public Response delete(@PathParam("id") long userId) {
         userService.deleteUser(userId);
         return Response.ok().build();

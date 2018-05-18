@@ -1,8 +1,11 @@
 package cf.baradist.model;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+@XmlRootElement(name = "Transfer")
 public class Transfer {
     private Long id;
     private int currencyCode;
@@ -21,6 +24,7 @@ public class Transfer {
         this.toAccountId = toAccountId;
     }
 
+    @XmlElement(name = "id")
     public Long getId() {
         return id;
     }
@@ -29,6 +33,7 @@ public class Transfer {
         this.id = id;
     }
 
+    @XmlElement(name = "currencyCode")
     public int getCurrencyCode() {
         return currencyCode;
     }
@@ -37,6 +42,7 @@ public class Transfer {
         this.currencyCode = currencyCode;
     }
 
+    @XmlElement(name = "amount")
     public BigDecimal getAmount() {
         return amount;
     }
@@ -45,6 +51,7 @@ public class Transfer {
         this.amount = amount;
     }
 
+    @XmlElement(name = "fromAccountId")
     public Long getFromAccountId() {
         return fromAccountId;
     }
@@ -53,6 +60,7 @@ public class Transfer {
         this.fromAccountId = fromAccountId;
     }
 
+    @XmlElement(name = "toAccountId")
     public Long getToAccountId() {
         return toAccountId;
     }
