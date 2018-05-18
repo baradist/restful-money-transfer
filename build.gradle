@@ -1,9 +1,24 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.2"
+    }
+}
+
 group 'cf.baradist'
 version '1.0-SNAPSHOT'
 
-apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: "com.github.johnrengelman.shadow"
 
-sourceCompatibility = 1.8
+mainClassName = 'cf.baradist.JettyServer'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
@@ -23,10 +38,8 @@ dependencies {
     compile "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
 
     compile "org.glassfish.jersey.containers:jersey-container-servlet-core:${jerseyVersion}"
-    compile "org.glassfish.jersey.media:jersey-media-multipart:${jerseyVersion}"
     compile "org.glassfish.jersey.media:jersey-media-moxy:${jerseyVersion}"
     compile "org.glassfish.jersey.inject:jersey-hk2:${jerseyVersion}"
-    compile 'javax.servlet:servlet-api:2.5'
     compile 'io.swagger:swagger-jersey2-jaxrs:1.5.10'
 
     compile 'com.h2database:h2:1.4.197'
