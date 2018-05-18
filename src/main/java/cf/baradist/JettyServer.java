@@ -11,22 +11,22 @@ import org.glassfish.jersey.servlet.ServletContainer;
 public class JettyServer {
 
     private static final String PROPERTIES_FILE = "src/main/resources/application.properties";
-    private static final String DATA_REST_BASE_PATH = "data.rest.basePath";
-    private static final String DATA_REST_PORT = "data.rest.port";
+    private static final String DATA_REST_BASE_PATH = "/api";
+    private static final int DATA_REST_PORT = 8080;
 
     public static void main(String[] args) throws Exception {
-        Configurer.readProperties(PROPERTIES_FILE);
         Configurer.configureDb();
         runServer();
     }
 
     private static void runServer() throws Exception {
-        Server jettyServer = new Server(8080);
+        Server jettyServer = new Server(DATA_REST_PORT);
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
 
-        ServletHolder apiServlet = context.addServlet(ServletContainer.class, "/api/*");
+        // API
+        ServletHolder apiServlet = context.addServlet(ServletContainer.class, DATA_REST_BASE_PATH + "/*");
         apiServlet.setInitOrder(1);
         apiServlet.setInitParameter(ServerProperties.PROVIDER_PACKAGES,
                 "cf.baradist.controller;io.swagger.jaxrs.json;io.swagger.jaxrs.listing");
@@ -35,7 +35,7 @@ public class JettyServer {
         ServletHolder swaggerServlet = context.addServlet(DefaultJaxrsConfig.class, "/swagger-core");
         swaggerServlet.setInitOrder(2);
         swaggerServlet.setInitParameter("api.version", "1.0.0");
-        swaggerServlet.setInitParameter("swagger.api.basepath", "/api");
+        swaggerServlet.setInitParameter("swagger.api.basepath", DATA_REST_BASE_PATH);
 
         // Lastly, the default servlet for root content (always needed, to satisfy servlet spec)
         // It is important that this is last.
