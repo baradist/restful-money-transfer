@@ -3,11 +3,7 @@ package cf.baradist.dao.h2;
 import cf.baradist.dao.TransferDao;
 import cf.baradist.model.Transfer;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +17,7 @@ public interface H2TransferDaoImpl extends TransferDao {
     String TO_ACCOUNT_ID = "toAccountId";
 
     @Override
-    default List<Transfer> getAll() {
+    default List<Transfer> getAll() throws SQLException {
         List<Transfer> transfers = new ArrayList<>();
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("SELECT id, currency, amount, fromAccountId, toAccountId FROM transfer");
@@ -34,13 +30,11 @@ public interface H2TransferDaoImpl extends TransferDao {
                         rs.getLong(TO_ACCOUNT_ID)));
             }
             return transfers;
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't read data", e);
         }
     }
 
     @Override
-    default List<Transfer> getTransferByFromAccountId(Long fromAccountId) {
+    default List<Transfer> getTransfersByFromAccountId(Long fromAccountId) throws SQLException {
         List<Transfer> transfers = new ArrayList<>();
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(
@@ -55,13 +49,11 @@ public interface H2TransferDaoImpl extends TransferDao {
                         rs.getLong(TO_ACCOUNT_ID)));
             }
             return transfers;
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't read data", e);
         }
     }
 
     @Override
-    default List<Transfer> getTransferByToAccountId(Long toAccountId) {
+    default List<Transfer> getTransfersByToAccountId(Long toAccountId) throws SQLException {
         List<Transfer> transfers = new ArrayList<>();
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(
@@ -76,13 +68,11 @@ public interface H2TransferDaoImpl extends TransferDao {
                         rs.getLong(TO_ACCOUNT_ID)));
             }
             return transfers;
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't read data", e);
         }
     }
 
     @Override
-    default List<Transfer> getTransferByFromAccountIdAndToAccountId(Long fromAccountId, Long toAccountId) {
+    default List<Transfer> getTransfersByFromAccountIdAndToAccountId(Long fromAccountId, Long toAccountId) throws SQLException {
         List<Transfer> transfers = new ArrayList<>();
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(
@@ -99,13 +89,11 @@ public interface H2TransferDaoImpl extends TransferDao {
                         rs.getLong(TO_ACCOUNT_ID)));
             }
             return transfers;
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't read data", e);
         }
     }
 
     @Override
-    default Optional<Transfer> getById(Long id) {
+    default Optional<Transfer> getById(Long id) throws SQLException {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(
                     "SELECT id, currency, amount, fromAccountId, toAccountId FROM transfer WHERE id = ?");
@@ -117,13 +105,11 @@ public interface H2TransferDaoImpl extends TransferDao {
                             rs.getBigDecimal(AMOUNT),
                             rs.getLong(FROM_ACCOUNT_ID),
                             rs.getLong(TO_ACCOUNT_ID)));
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't read transfer with id = " + id, e);
         }
     }
 
     @Override
-    default Long commit(Transfer transfer) {
+    default Long commit(Transfer transfer) throws SQLException {
         Long transferId;
         try (Connection conn = getConnection()) {
             conn.setAutoCommit(false);
@@ -140,7 +126,7 @@ public interface H2TransferDaoImpl extends TransferDao {
             if (generatedKeys.next()) {
                 transferId = generatedKeys.getLong(1);
             } else {
-                throw new RuntimeException("commit(): failed to insert transfer " + transfer);
+                throw new SQLException("insert(): failed to insert transfer " + transfer);
             }
 
             PreparedStatement stmtDecreaseFrom = conn.prepareStatement(
@@ -158,8 +144,6 @@ public interface H2TransferDaoImpl extends TransferDao {
             conn.commit();
 
             return transferId;
-        } catch (SQLException e) {
-            throw new RuntimeException("commit(): failed to commit transfer " + transfer, e);
         }
     }
 }

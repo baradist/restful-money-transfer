@@ -19,12 +19,12 @@ public interface H2AccountDaoImpl extends AccountDao {
     String CURRENCY = "currency";
 
     @Override
-    default List<Account> getAll() {
+    default List<Account> getAll() throws SQLException {
         return getAllByUserId(null);
     }
 
     @Override
-    default List<Account> getAllByUserId(Long userId) {
+    default List<Account> getAllByUserId(Long userId) throws SQLException {
         List<Account> accounts = new ArrayList<>();
         try (Connection conn = getConnection()) {
             PreparedStatement stmt;
@@ -42,17 +42,16 @@ public interface H2AccountDaoImpl extends AccountDao {
                         rs.getLong(ID),
                         rs.getLong(USER_ID),
                         rs.getBigDecimal(BALANCE),
-                        new Currency(((H2CurrencyDaoImpl) DaoHandler.getDaoByClass(Currency.class)).getById(rs.getInt(CURRENCY)).get())
+                        new Currency(((H2CurrencyDaoImpl) DaoHandler.getDaoByClass(Currency.class))
+                                .getById(rs.getInt(CURRENCY)).get())
                 ));
             }
             return accounts;
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't read data", e);
         }
     }
 
     @Override
-    default Optional<Account> getById(Long id) {
+    default Optional<Account> getById(Long id) throws SQLException {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt;
             stmt = conn.prepareStatement("SELECT id, userId, balance, currency FROM account WHERE id = ?");
@@ -63,16 +62,16 @@ public interface H2AccountDaoImpl extends AccountDao {
                             rs.getLong(ID),
                             rs.getLong(USER_ID),
                             rs.getBigDecimal(BALANCE),
-                            new Currency(((H2CurrencyDaoImpl) DaoHandler.getDaoByClass(Currency.class)).getById(rs.getInt(CURRENCY)).get())
+                            new Currency(((H2CurrencyDaoImpl) DaoHandler.getDaoByClass(Currency.class))
+                                    .getById(rs.getInt(CURRENCY)).get())
                     ));
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't read user with id = " + id, e);
         }
     }
 
     @Override
-    default Long insert(Account account) {
+    default Long insert(Account account) throws SQLException {
         try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
             PreparedStatement stmt = conn.prepareStatement("INSERT INTO account (userId, balance, currency) VALUES (?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
             stmt.setLong(1, account.getUserId());
@@ -81,37 +80,32 @@ public interface H2AccountDaoImpl extends AccountDao {
             stmt.executeUpdate();
             ResultSet generatedKeys = stmt.getGeneratedKeys();
             if (generatedKeys.next()) {
+                conn.commit();
                 return generatedKeys.getLong(1);
             } else {
-                throw new RuntimeException("insert(): failed to insert account " + account);
+                conn.rollback();
+                throw new SQLException("insert(): failed to insert account " + account);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("insert(): failed to insert account " + account, e);
         }
     }
 
     @Override
-    default void update(Long id, Account account) {
+    default int update(Long id, Account account) throws SQLException {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("UPDATE account SET balance = ?, currency = ? WHERE id = ?");
             stmt.setBigDecimal(1, account.getBalance());
             stmt.setInt(2, account.getCurrency().getIso4217_code());
             stmt.setLong(3, id);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("update(): failed to update account " + id, e);
+            return stmt.executeUpdate();
         }
     }
 
     @Override
-    default void delete(Long id) {
+    default int delete(Long id) throws SQLException {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("DELETE FROM account WHERE id = ?");
             stmt.setLong(1, id);
-            stmt.executeUpdate();
-            stmt.getGeneratedKeys();
-        } catch (SQLException e) {
-            throw new RuntimeException("delete(): failed to delete account " + id, e);
+            return stmt.executeUpdate();
         }
     }
 }

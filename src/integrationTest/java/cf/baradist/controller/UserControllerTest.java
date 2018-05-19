@@ -1,6 +1,7 @@
 package cf.baradist.controller;
 
 import cf.baradist.AbstractTest;
+import cf.baradist.exception.NotFoundException;
 import cf.baradist.model.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class UserControllerTest extends AbstractTest {
@@ -23,7 +23,7 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void getAllUsers() {
+    public void getAllUsers() throws Exception {
         List<User> users = new ArrayList<User>() {
             {
                 add(new User(1L, "John", "john_doe@gmail.com"));
@@ -35,39 +35,35 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void get() {
+    public void get() throws Exception {
         Response response = controller.get(1L);
         assertThat(response.getEntity(), is(new User(1L, "John", "john_doe@gmail.com")));
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
-    @Test
-    public void getNotExisting() {
-        Response response = controller.get(77L);
-        assertNull(response.getEntity());
-        assertThat(response.getStatusInfo(), is(Response.Status.NOT_FOUND));
+    @Test(expected = NotFoundException.class)
+    public void getNotExisting() throws Exception {
+        controller.get(77L);
     }
 
     @Test
-    public void add() {
+    public void add() throws Exception {
         Response response = controller.add(new User(0L, "NewUser", "AnEmailOfANewUser@mail.com"));
         assertThat(response.getEntity(), is(new User(4L, "NewUser", "AnEmailOfANewUser@mail.com")));
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
     @Test
-    public void update() {
+    public void update() throws Exception {
         controller.update(1L, new User(0L, "NewNameOfAnOldUser", "email@mail.com"));
         Response response = controller.get(1L);
         assertThat(response.getEntity(), is(new User(1L, "NewNameOfAnOldUser", "email@mail.com")));
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
-    @Test
-    public void delete() {
+    @Test(expected = NotFoundException.class)
+    public void delete() throws Exception {
         controller.delete(1L);
-        Response response = controller.get(1L);
-        assertNull(response.getEntity());
-        assertThat(response.getStatusInfo(), is(Response.Status.NOT_FOUND));
+        controller.get(1L); // shouldn't be found
     }
 }

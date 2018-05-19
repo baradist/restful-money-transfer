@@ -17,7 +17,7 @@ public interface H2CurrencyDaoImpl extends CurrencyDao {
     String NAME = "name";
 
     @Override
-    default Optional<Currency> getById(int currencyId) {
+    default Optional<Currency> getById(int currencyId) throws SQLException {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(
                     "select iso4217_code, iso4217_symcode, name FROM currency WHERE iso4217_code = ?");
@@ -27,8 +27,6 @@ public interface H2CurrencyDaoImpl extends CurrencyDao {
                     new Currency(currencyId,
                             rs.getString(ISO4217_SYMCODE),
                             rs.getString(NAME)));
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't read Currency with " + ISO4217_SYMCODE + " = " + currencyId, e);
         }
     }
 }
