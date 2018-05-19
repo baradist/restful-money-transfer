@@ -2,19 +2,20 @@ package cf.baradist.dao;
 
 import cf.baradist.model.Account;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 public interface AccountDao extends Dao {
-    List<Account> getAll();
+    List<Account> getAll() throws SQLException;
 
-    List<Account> getAllByUserId(Long userId);
+    List<Account> getAllByUserId(Long userId) throws SQLException;
 
-    Optional<Account> getById(Long id);
+    Optional<Account> getById(Long id) throws SQLException;
 
-    Long insert(Account account);
+    Long insert(Account account) throws SQLException;
 
-    void update(Long id, Account account);
+    void update(Long id, Account account) throws SQLException;
 
-    void delete(Long id);
+    void delete(Long id) throws SQLException;
 }

@@ -16,7 +16,7 @@ public interface H2UserDaoImpl extends UserDao {
     String EMAIL = "email";
 
     @Override
-    default List<User> getAll() {
+    default List<User> getAll() throws SQLException {
         List<User> users = new ArrayList<>();
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("SELECT id, name, email FROM user");
@@ -27,13 +27,11 @@ public interface H2UserDaoImpl extends UserDao {
                         rs.getString(EMAIL)));
             }
             return users;
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't read data", e);
         }
     }
 
     @Override
-    default Optional<User> getById(Long id) {
+    default Optional<User> getById(Long id) throws SQLException {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("SELECT id, name, email FROM user WHERE id = ?");
             stmt.setLong(1, id);
@@ -42,13 +40,11 @@ public interface H2UserDaoImpl extends UserDao {
                     new User(id,
                             rs.getString(NAME),
                             rs.getString(EMAIL)));
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't read user with id = " + id, e);
         }
     }
 
     @Override
-    default Long insert(User user) {
+    default Long insert(User user) throws SQLException {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("INSERT INTO user (name, email) VALUES (?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
@@ -59,35 +55,29 @@ public interface H2UserDaoImpl extends UserDao {
             if (generatedKeys.next()) {
                 return generatedKeys.getLong(1);
             } else {
-                throw new RuntimeException("insert(): failed to insert user " + user);
+                throw new SQLException("insert(): failed to insert user " + user);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("insert(): failed to insert user " + user, e);
         }
     }
 
     @Override
-    default void update(Long id, User user) {
+    default void update(Long id, User user) throws SQLException {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("UPDATE user SET name = ?, email = ? WHERE id = ?");
             stmt.setString(1, user.getName());
             stmt.setString(2, user.getEmail());
             stmt.setLong(3, id);
             stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("update(): failed to update user " + id, e);
         }
     }
 
     @Override
-    default void delete(Long id) {
+    default void delete(Long id) throws SQLException {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("DELETE user WHERE id = ?");
             stmt.setLong(1, id);
             stmt.executeUpdate();
             stmt.getGeneratedKeys();
-        } catch (SQLException e) {
-            throw new RuntimeException("delete(): failed to delete user " + id, e);
         }
     }
 }
