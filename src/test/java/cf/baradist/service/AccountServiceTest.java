@@ -1,6 +1,7 @@
 package cf.baradist.service;
 
 import cf.baradist.dao.AccountDao;
+import cf.baradist.exception.NotFoundException;
 import cf.baradist.model.Account;
 import cf.baradist.model.Currency;
 import org.junit.Before;
@@ -51,40 +52,64 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void getAllAccountsTest() throws Exception {
+    public void getAllAccounts() throws Exception {
         when(accountDao.getAll()).thenReturn(accounts);
         assertThat(accountService.getAllAccounts(), is(accounts));
     }
 
     @Test
-    public void getAllAccountsByUserIdTest() throws Exception {
+    public void getAllAccountsByUserId() throws Exception {
         List<Account> filteredAccounts = accounts.stream().filter(a -> a.getUserId() == 2L).collect(Collectors.toList());
         when(accountDao.getAllByUserId(2L)).thenReturn(filteredAccounts);
         assertThat(accountService.getAllAccountsByUserId(2L), is(filteredAccounts));
     }
 
     @Test
-    public void getAccountByIdTest() throws Exception {
+    public void getAccountById() throws Exception {
         when(accountDao.getById(1L)).thenReturn(Optional.of(account));
         assertThat(accountService.getAccountById(1L).get(), is(account));
     }
 
+    @Test(expected = NotFoundException.class)
+    public void getAccountByIdNotFound() throws Exception {
+        when(accountDao.getById(1L)).thenReturn(Optional.empty());
+        accountService.getAccountById(1L);
+        verify(accountDao).getById(1L);
+    }
+
     @Test
-    public void addAccountTest() throws Exception {
+    public void addAccount() throws Exception {
         when(accountDao.insert(account)).thenReturn(6L);
         Account account1 = new Account(6L, 1L, new BigDecimal("77.70"), USD);
         assertThat(accountService.addAccount(account).get(), is(account1));
+        verify(accountDao).insert(account);
     }
 
     @Test
-    public void updateAccountTest() throws Exception {
-        accountService.updateAccount(0L, account);
-        verify(accountDao).update(0L, account);
+    public void updateAccount() throws Exception {
+        when(accountDao.update(1L, account)).thenReturn(1);
+        accountService.updateAccount(1L, account);
+        verify(accountDao).update(1L, account);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void updateAccountNotFound() throws Exception {
+        when(accountDao.update(1L, account)).thenReturn(0);
+        accountService.updateAccount(1L, account);
+        verify(accountDao).update(1L, account);
     }
 
     @Test
-    public void deleteAccountTest() throws Exception {
-        accountService.deleteAccount(0L);
-        verify(accountDao).delete(0L);
+    public void deleteAccount() throws Exception {
+        when(accountDao.delete(1L)).thenReturn(1);
+        accountService.deleteAccount(1L);
+        verify(accountDao).delete(1L);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void deleteAccountNotFound() throws Exception {
+        when(accountDao.delete(1L)).thenReturn(0);
+        accountService.deleteAccount(1L);
+        verify(accountDao).delete(1L);
     }
 }

@@ -1,6 +1,7 @@
 package cf.baradist.controller;
 
 import cf.baradist.AbstractTest;
+import cf.baradist.exception.NotFoundException;
 import cf.baradist.model.Account;
 import cf.baradist.model.Transfer;
 import org.junit.Before;
@@ -14,7 +15,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class TransferControllerTest extends AbstractTest {
@@ -77,11 +77,9 @@ public class TransferControllerTest extends AbstractTest {
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
-    @Test
+    @Test(expected = NotFoundException.class)
     public void getNotExisting() throws Exception {
         Response response = controller.get(77L);
-        assertNull(response.getEntity());
-        assertThat(response.getStatusInfo(), is(Response.Status.NOT_FOUND));
     }
 
     @Test

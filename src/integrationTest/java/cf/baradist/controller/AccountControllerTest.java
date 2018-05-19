@@ -1,6 +1,7 @@
 package cf.baradist.controller;
 
 import cf.baradist.AbstractTest;
+import cf.baradist.exception.NotFoundException;
 import cf.baradist.model.Account;
 import cf.baradist.model.Currency;
 import org.junit.Before;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class AccountControllerTest extends AbstractTest {
@@ -61,11 +61,9 @@ public class AccountControllerTest extends AbstractTest {
                 is(new Account(2L, 1L, new BigDecimal("0.00"), USD)));
     }
 
-    @Test
+    @Test(expected = NotFoundException.class)
     public void getNotExisting() throws Exception {
-        Response response = controller.get(77L);
-        assertNull(response.getEntity());
-        assertThat(response.getStatusInfo(), is(Response.Status.NOT_FOUND));
+        controller.get(77L);
     }
 
     @Test
@@ -91,11 +89,19 @@ public class AccountControllerTest extends AbstractTest {
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
-    @Test
+    @Test(expected = NotFoundException.class)
+    public void updateNotExisting() throws Exception {
+        controller.update(77L, new Account(77L, 1L, new BigDecimal("88.88"), EUR));
+    }
+
+    @Test(expected = NotFoundException.class)
     public void delete() throws Exception {
         controller.delete(1L);
-        Response response = controller.get(1L);
-        assertNull(response.getEntity());
-        assertThat(response.getStatusInfo(), is(Response.Status.NOT_FOUND));
+        controller.get(1L); // shouldn't be found
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void deleteNotExisting() throws Exception {
+        controller.delete(77L);
     }
 }

@@ -1,6 +1,7 @@
 package cf.baradist.controller;
 
 import cf.baradist.AbstractTest;
+import cf.baradist.exception.NotFoundException;
 import cf.baradist.model.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class UserControllerTest extends AbstractTest {
@@ -41,11 +41,9 @@ public class UserControllerTest extends AbstractTest {
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
-    @Test
+    @Test(expected = NotFoundException.class)
     public void getNotExisting() throws Exception {
-        Response response = controller.get(77L);
-        assertNull(response.getEntity());
-        assertThat(response.getStatusInfo(), is(Response.Status.NOT_FOUND));
+        controller.get(77L);
     }
 
     @Test
@@ -63,11 +61,9 @@ public class UserControllerTest extends AbstractTest {
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
-    @Test
+    @Test(expected = NotFoundException.class)
     public void delete() throws Exception {
         controller.delete(1L);
-        Response response = controller.get(1L);
-        assertNull(response.getEntity());
-        assertThat(response.getStatusInfo(), is(Response.Status.NOT_FOUND));
+        controller.get(1L); // shouldn't be found
     }
 }
