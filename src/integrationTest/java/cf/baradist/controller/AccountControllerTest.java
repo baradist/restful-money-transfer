@@ -28,7 +28,7 @@ public class AccountControllerTest extends AbstractTest {
     }
 
     @Test
-    public void getAllAccountsByUserId() {
+    public void getAllAccountsByUserId() throws Exception {
         List<Account> accounts = new ArrayList<Account>() {
             {
                 add(new Account(1L, 1L, new BigDecimal("77.70"), USD));
@@ -50,7 +50,7 @@ public class AccountControllerTest extends AbstractTest {
     }
 
     @Test
-    public void get() {
+    public void get() throws Exception {
         Response response = controller.get(1L);
         assertThat(response.getEntity(),
                 is(new Account(1L, 1L, new BigDecimal("77.70"), USD)));
@@ -62,21 +62,21 @@ public class AccountControllerTest extends AbstractTest {
     }
 
     @Test
-    public void getNotExisting() {
+    public void getNotExisting() throws Exception {
         Response response = controller.get(77L);
         assertNull(response.getEntity());
         assertThat(response.getStatusInfo(), is(Response.Status.NOT_FOUND));
     }
 
     @Test
-    public void add() {
+    public void add() throws Exception {
         Response response = controller.add(new Account(0L, 2L, new BigDecimal("42.30"), EUR));
         assertThat(response.getEntity(), is(new Account(6L, 2L, new BigDecimal("42.30"), EUR)));
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
     @Test
-    public void update() {
+    public void update() throws Exception {
         controller.update(1L, new Account(0L, 1L, new BigDecimal("88.88"), EUR));
         Response response = controller.get(1L);
         assertThat(response.getEntity(), is(new Account(1L, 1L, new BigDecimal("88.88"), EUR)));
@@ -84,7 +84,7 @@ public class AccountControllerTest extends AbstractTest {
     }
 
     @Test
-    public void updateUserIdDoesntChange() {
+    public void updateUserIdDoesntChange() throws Exception {
         controller.update(1L, new Account(0L, 2L, new BigDecimal("88.88"), EUR));
         Response response = controller.get(1L);
         assertThat(response.getEntity(), is(new Account(1L, 1L, new BigDecimal("88.88"), EUR)));
@@ -92,7 +92,7 @@ public class AccountControllerTest extends AbstractTest {
     }
 
     @Test
-    public void delete() {
+    public void delete() throws Exception {
         controller.delete(1L);
         Response response = controller.get(1L);
         assertNull(response.getEntity());

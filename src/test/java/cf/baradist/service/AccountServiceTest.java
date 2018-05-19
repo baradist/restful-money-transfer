@@ -51,39 +51,39 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void getAllAccountsTest() {
+    public void getAllAccountsTest() throws Exception {
         when(accountDao.getAll()).thenReturn(accounts);
         assertThat(accountService.getAllAccounts(), is(accounts));
     }
 
     @Test
-    public void getAllAccountsByUserIdTest() {
+    public void getAllAccountsByUserIdTest() throws Exception {
         List<Account> filteredAccounts = accounts.stream().filter(a -> a.getUserId() == 2L).collect(Collectors.toList());
         when(accountDao.getAllByUserId(2L)).thenReturn(filteredAccounts);
         assertThat(accountService.getAllAccountsByUserId(2L), is(filteredAccounts));
     }
 
     @Test
-    public void getAccountByIdTest() {
+    public void getAccountByIdTest() throws Exception {
         when(accountDao.getById(1L)).thenReturn(Optional.of(account));
         assertThat(accountService.getAccountById(1L).get(), is(account));
     }
 
     @Test
-    public void addAccountTest() {
+    public void addAccountTest() throws Exception {
         when(accountDao.insert(account)).thenReturn(6L);
         Account account1 = new Account(6L, 1L, new BigDecimal("77.70"), USD);
         assertThat(accountService.addAccount(account).get(), is(account1));
     }
 
     @Test
-    public void updateAccountTest() {
+    public void updateAccountTest() throws Exception {
         accountService.updateAccount(0L, account);
         verify(accountDao).update(0L, account);
     }
 
     @Test
-    public void deleteAccountTest() {
+    public void deleteAccountTest() throws Exception {
         accountService.deleteAccount(0L);
         verify(accountDao).delete(0L);
     }

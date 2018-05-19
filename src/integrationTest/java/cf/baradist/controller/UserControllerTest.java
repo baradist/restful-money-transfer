@@ -23,7 +23,7 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void getAllUsers() {
+    public void getAllUsers() throws Exception {
         List<User> users = new ArrayList<User>() {
             {
                 add(new User(1L, "John", "john_doe@gmail.com"));
@@ -35,28 +35,28 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void get() {
+    public void get() throws Exception {
         Response response = controller.get(1L);
         assertThat(response.getEntity(), is(new User(1L, "John", "john_doe@gmail.com")));
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
     @Test
-    public void getNotExisting() {
+    public void getNotExisting() throws Exception {
         Response response = controller.get(77L);
         assertNull(response.getEntity());
         assertThat(response.getStatusInfo(), is(Response.Status.NOT_FOUND));
     }
 
     @Test
-    public void add() {
+    public void add() throws Exception {
         Response response = controller.add(new User(0L, "NewUser", "AnEmailOfANewUser@mail.com"));
         assertThat(response.getEntity(), is(new User(4L, "NewUser", "AnEmailOfANewUser@mail.com")));
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
     @Test
-    public void update() {
+    public void update() throws Exception {
         controller.update(1L, new User(0L, "NewNameOfAnOldUser", "email@mail.com"));
         Response response = controller.get(1L);
         assertThat(response.getEntity(), is(new User(1L, "NewNameOfAnOldUser", "email@mail.com")));
@@ -64,7 +64,7 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void delete() {
+    public void delete() throws Exception {
         controller.delete(1L);
         Response response = controller.get(1L);
         assertNull(response.getEntity());

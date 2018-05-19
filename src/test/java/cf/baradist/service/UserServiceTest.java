@@ -35,7 +35,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getAllUsersTest() {
+    public void getAllUsersTest() throws Exception {
         List<User> users = new ArrayList<User>() {
             {
                 add(user);
@@ -48,26 +48,26 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserByIdTest() {
+    public void getUserByIdTest() throws Exception {
         when(userDao.getById(1L)).thenReturn(Optional.of(user));
         assertThat(userService.getUserById(1L).get(), is(user));
     }
 
     @Test
-    public void addUserTest() {
+    public void addUserTest() throws Exception {
         when(userDao.insert(user)).thenReturn(4L);
         User user1 = new User(4L, "Name1", "Email1");
         assertThat(userService.addUser(user).get(), is(user1));
     }
 
     @Test
-    public void updateUserTest() {
+    public void updateUserTest() throws Exception {
         userService.updateUser(0L, user);
         verify(userDao).update(0L, user);
     }
 
     @Test
-    public void deleteUserTest() {
+    public void deleteUserTest() throws Exception {
         userService.deleteUser(0L);
         verify(userDao).delete(0L);
     }

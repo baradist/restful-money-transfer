@@ -39,21 +39,21 @@ public class TransferControllerTest extends AbstractTest {
     }
 
     @Test
-    public void get() {
+    public void get() throws Exception {
         Response response = controller.get(1L);
         assertThat(response.getEntity(), is(transfer));
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
     @Test
-    public void getAllUsers() {
+    public void getAllUsers() throws Exception {
         final Response response = controller.getAllTransfers();
         assertThat(response.getEntity(), is(transfers));
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
     @Test
-    public void getTransfersByFromAccountId() {
+    public void getTransfersByFromAccountId() throws Exception {
         Response response = controller.getTransfersByFromAccountId(3L);
         assertThat(response.getEntity(),
                 is(transfers.stream().filter(t -> t.getFromAccountId() == 3L).collect(Collectors.toList())));
@@ -61,7 +61,7 @@ public class TransferControllerTest extends AbstractTest {
     }
 
     @Test
-    public void getTransfersByToAccountId() {
+    public void getTransfersByToAccountId() throws Exception {
         Response response = controller.getTransfersByToAccountId(1L);
         assertThat(response.getEntity(),
                 is(transfers.stream().filter(t -> t.getToAccountId() == 1L).collect(Collectors.toList())));
@@ -69,7 +69,7 @@ public class TransferControllerTest extends AbstractTest {
     }
 
     @Test
-    public void getTransfersByFromAccountIdAndToAccountId() {
+    public void getTransfersByFromAccountIdAndToAccountId() throws Exception {
         Response response = controller.getTransfersByFromAccountIdAndToAccountId(3L, 1L);
         assertThat(response.getEntity(),
                 is(transfers.stream().filter(t ->
@@ -78,14 +78,14 @@ public class TransferControllerTest extends AbstractTest {
     }
 
     @Test
-    public void getNotExisting() {
+    public void getNotExisting() throws Exception {
         Response response = controller.get(77L);
         assertNull(response.getEntity());
         assertThat(response.getStatusInfo(), is(Response.Status.NOT_FOUND));
     }
 
     @Test
-    public void add() {
+    public void add() throws Exception {
         Response response = controller.add(new Transfer(0L, 840, new BigDecimal("10.00"), 3L, 1L));
         Account from = (Account) accountController.get(3L).getEntity();
         Account to = (Account) accountController.get(1L).getEntity();
@@ -98,7 +98,7 @@ public class TransferControllerTest extends AbstractTest {
 
     @Ignore
     @Test
-    public void delete() {
+    public void delete() throws Exception {
         final Transfer removableTransfer = (Transfer) controller.get(1L).getEntity();
 
         Response response = controller.delete(removableTransfer.getId());
