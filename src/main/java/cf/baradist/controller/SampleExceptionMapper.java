@@ -21,6 +21,8 @@ import cf.baradist.exception.ApiException;
 import cf.baradist.exception.BadRequestException;
 import cf.baradist.exception.NotFoundException;
 import cf.baradist.model.ApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -30,37 +32,46 @@ import java.sql.SQLException;
 
 @Provider
 public class SampleExceptionMapper implements ExceptionMapper<Exception> {
+    private Logger LOGGER = LoggerFactory.getLogger(SampleExceptionMapper.class);
+
     public Response toResponse(Exception exception) {
         if (exception instanceof javax.ws.rs.WebApplicationException) {
+            LOGGER.error(exception.getMessage(), exception);
             javax.ws.rs.WebApplicationException e = (javax.ws.rs.WebApplicationException) exception;
             return Response
                     .status(e.getResponse().getStatus())
                     .entity(new ApiResponse(e.getResponse().getStatus(),
                             exception.getMessage())).build();
         } else if (exception instanceof com.fasterxml.jackson.core.JsonParseException) {
+            LOGGER.warn(exception.getMessage(), exception);
             return Response.status(400)
                     .entity(new ApiResponse(400, "bad input")).build();
         } else if (exception instanceof NotFoundException) {
+            LOGGER.info(exception.getMessage(), exception);
             return Response
                     .status(Status.NOT_FOUND)
                     .entity(new ApiResponse(ApiResponse.ERROR, exception
                             .getMessage())).build();
         } else if (exception instanceof BadRequestException) {
+            LOGGER.warn(exception.getMessage(), exception);
             return Response
                     .status(Status.BAD_REQUEST)
                     .entity(new ApiResponse(ApiResponse.ERROR, exception
                             .getMessage())).build();
         } else if (exception instanceof ApiException) {
+            LOGGER.warn(exception.getMessage(), exception);
             return Response
                     .status(Status.BAD_REQUEST)
                     .entity(new ApiResponse(ApiResponse.ERROR, exception
                             .getMessage())).build();
         } else if (exception instanceof SQLException) {
+            LOGGER.error(exception.getMessage(), exception);
             return Response
                     .status(Status.INTERNAL_SERVER_ERROR)
                     .entity(new ApiResponse(ApiResponse.ERROR, exception
                             .getMessage())).build();
         } else {
+            LOGGER.error(exception.getMessage(), exception);
             return Response
                     .status(Status.INTERNAL_SERVER_ERROR)
                     .entity(new ApiResponse(Status.INTERNAL_SERVER_ERROR.getStatusCode(),
