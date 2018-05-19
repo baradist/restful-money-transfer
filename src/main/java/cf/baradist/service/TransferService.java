@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class TransferService {
+    private static final String NOT_FOUND_A_TRANSFER_WITH_ID = "Not found a transfer with ID=";
     private static TransferService instance = new TransferService();
+
     private TransferDao transferDao;
     private AccountDao accountDao;
 
@@ -29,8 +31,12 @@ public class TransferService {
         this.accountDao = accountDao;
     }
 
-    public Optional<Transfer> getById(Long id) throws SQLException {
-        return transferDao.getById(id);
+    public Optional<Transfer> getById(Long id) throws SQLException, NotFoundException {
+        Optional<Transfer> account = transferDao.getById(id);
+        if (!account.isPresent()) {
+            throw new NotFoundException(404, NOT_FOUND_A_TRANSFER_WITH_ID + id);
+        }
+        return account;
     }
 
     public List<Transfer> getAllTransfers() throws SQLException {
@@ -38,15 +44,15 @@ public class TransferService {
     }
 
     public List<Transfer> getTransfersByFromAccountId(Long fromAccountId) throws SQLException {
-        return transferDao.getTransferByFromAccountId(fromAccountId);
+        return transferDao.getTransfersByFromAccountId(fromAccountId);
     }
 
     public List<Transfer> getTransfersByToAccountId(Long toAccountId) throws SQLException {
-        return transferDao.getTransferByToAccountId(toAccountId);
+        return transferDao.getTransfersByToAccountId(toAccountId);
     }
 
     public List<Transfer> getTransfersByFromAccountIdAndToAccountId(Long fromAccountId, Long toAccountId) throws SQLException {
-        return transferDao.getTransferByFromAccountIdAndToAccountId(fromAccountId, toAccountId);
+        return transferDao.getTransfersByFromAccountIdAndToAccountId(fromAccountId, toAccountId);
     }
 
     public Optional<Transfer> addTransfer(Transfer transfer) throws ApiException, SQLException {

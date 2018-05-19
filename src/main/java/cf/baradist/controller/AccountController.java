@@ -34,18 +34,15 @@ public class AccountController {
     @ApiOperation(value = "Get account by ID",
             notes = "Returns an account by a given ID")
     @Path("{id}")
-    public Response get(@PathParam("id") Long id) throws SQLException {
+    public Response get(@PathParam("id") Long id) throws SQLException, ApiException {
         Optional<Account> account = accountService.getAccountById(id);
-        if (!account.isPresent()) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
         return Response.ok(account.get()).build();
     }
 
     @POST
     @ApiOperation(value = "Creant account",
             notes = "Create a new account")
-    public Response add(Account account) throws SQLException, ApiException {
+    public Response add(Account account) throws SQLException {
         return Response.ok(accountService.addAccount(account).get()).build();
     }
 
@@ -53,7 +50,7 @@ public class AccountController {
     @ApiOperation(value = "Update account",
             notes = "Updates fields of an account with a given ID")
     @Path("{id}")
-    public Response update(@PathParam("id") Long accountId, Account account) throws SQLException {
+    public Response update(@PathParam("id") Long accountId, Account account) throws SQLException, ApiException {
         accountService.updateAccount(accountId, account);
         return Response.ok().build();
     }
@@ -62,7 +59,7 @@ public class AccountController {
     @ApiOperation(value = "Delete account",
             notes = "Removes an account with a given ID")
     @Path("{id}")
-    public Response delete(@PathParam("id") Long accountId) throws SQLException {
+    public Response delete(@PathParam("id") Long accountId) throws SQLException, ApiException {
         accountService.deleteAccount(accountId);
         return Response.ok().build();
     }

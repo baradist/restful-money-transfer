@@ -46,6 +46,7 @@ public interface H2UserDaoImpl extends UserDao {
     @Override
     default Long insert(User user) throws SQLException {
         try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
             PreparedStatement stmt = conn.prepareStatement("INSERT INTO user (name, email) VALUES (?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, user.getName());
@@ -53,31 +54,32 @@ public interface H2UserDaoImpl extends UserDao {
             stmt.executeUpdate();
             ResultSet generatedKeys = stmt.getGeneratedKeys();
             if (generatedKeys.next()) {
+                conn.commit();
                 return generatedKeys.getLong(1);
             } else {
+                conn.rollback();
                 throw new SQLException("insert(): failed to insert user " + user);
             }
         }
     }
 
     @Override
-    default void update(Long id, User user) throws SQLException {
+    default int update(Long id, User user) throws SQLException {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("UPDATE user SET name = ?, email = ? WHERE id = ?");
             stmt.setString(1, user.getName());
             stmt.setString(2, user.getEmail());
             stmt.setLong(3, id);
-            stmt.executeUpdate();
+            return stmt.executeUpdate();
         }
     }
 
     @Override
-    default void delete(Long id) throws SQLException {
+    default int delete(Long id) throws SQLException {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("DELETE user WHERE id = ?");
             stmt.setLong(1, id);
-            stmt.executeUpdate();
-            stmt.getGeneratedKeys();
+            return stmt.executeUpdate();
         }
     }
 }

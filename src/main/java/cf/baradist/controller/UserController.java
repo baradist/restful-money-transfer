@@ -1,5 +1,6 @@
 package cf.baradist.controller;
 
+import cf.baradist.exception.ApiException;
 import cf.baradist.model.User;
 import cf.baradist.service.UserService;
 import io.swagger.annotations.Api;
@@ -11,11 +12,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 @Path("/user")
 @Api(value = "user", description = "Operations about user")
-@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+@Produces(MediaType.APPLICATION_JSON)
 public class UserController {
     private UserService userService = UserService.getInstance();
 
@@ -33,11 +33,8 @@ public class UserController {
     @Path("{id}")
     @ApiOperation(value = "Get user by ID",
             notes = "Gets a user by a given ID")
-    public Response get(@PathParam("id") Long id) throws SQLException {
-        Optional<User> user = userService.getUserById(id);
-        return user.map(u ->
-                Response.ok(u).build()).orElseGet(() ->
-                Response.status(Response.Status.NOT_FOUND).build());
+    public Response get(@PathParam("id") Long id) throws SQLException, ApiException {
+        return Response.ok(userService.getUserById(id).get()).build();
     }
 
     @POST
@@ -51,7 +48,7 @@ public class UserController {
     @Path("{id}")
     @ApiOperation(value = "Update user",
             notes = "Updates fields of a user with a given ID")
-    public Response update(@PathParam("id") long userId, User user) throws SQLException {
+    public Response update(@PathParam("id") long userId, User user) throws SQLException, ApiException {
         userService.updateUser(userId, user);
         return Response.ok().build();
     }
@@ -60,7 +57,7 @@ public class UserController {
     @Path("{id}")
     @ApiOperation(value = "Delete user",
             notes = "Removes a user with a given ID")
-    public Response delete(@PathParam("id") long userId) throws SQLException {
+    public Response delete(@PathParam("id") long userId) throws SQLException, ApiException {
         userService.deleteUser(userId);
         return Response.ok().build();
     }

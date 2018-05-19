@@ -9,11 +9,11 @@ import java.util.Optional;
 public interface TransferDao extends Dao {
     List<Transfer> getAll() throws SQLException;
 
-    List<Transfer> getTransferByFromAccountId(Long fromAccountId) throws SQLException;
+    List<Transfer> getTransfersByFromAccountId(Long fromAccountId) throws SQLException;
 
-    List<Transfer> getTransferByToAccountId(Long toAccountId) throws SQLException;
+    List<Transfer> getTransfersByToAccountId(Long toAccountId) throws SQLException;
 
-    List<Transfer> getTransferByFromAccountIdAndToAccountId(Long fromAccountId, Long toAccountId) throws SQLException;
+    List<Transfer> getTransfersByFromAccountIdAndToAccountId(Long fromAccountId, Long toAccountId) throws SQLException;
 
     Optional<Transfer> getById(Long id) throws SQLException;
 

@@ -15,7 +15,7 @@ public interface AccountDao extends Dao {
 
     Long insert(Account account) throws SQLException;
 
-    void update(Long id, Account account) throws SQLException;
+    int update(Long id, Account account) throws SQLException;
 
-    void delete(Long id) throws SQLException;
+    int delete(Long id) throws SQLException;
 }

@@ -42,7 +42,8 @@ public interface H2AccountDaoImpl extends AccountDao {
                         rs.getLong(ID),
                         rs.getLong(USER_ID),
                         rs.getBigDecimal(BALANCE),
-                        new Currency(((H2CurrencyDaoImpl) DaoHandler.getDaoByClass(Currency.class)).getById(rs.getInt(CURRENCY)).get())
+                        new Currency(((H2CurrencyDaoImpl) DaoHandler.getDaoByClass(Currency.class))
+                                .getById(rs.getInt(CURRENCY)).get())
                 ));
             }
             return accounts;
@@ -61,7 +62,8 @@ public interface H2AccountDaoImpl extends AccountDao {
                             rs.getLong(ID),
                             rs.getLong(USER_ID),
                             rs.getBigDecimal(BALANCE),
-                            new Currency(((H2CurrencyDaoImpl) DaoHandler.getDaoByClass(Currency.class)).getById(rs.getInt(CURRENCY)).get())
+                            new Currency(((H2CurrencyDaoImpl) DaoHandler.getDaoByClass(Currency.class))
+                                    .getById(rs.getInt(CURRENCY)).get())
                     ));
         }
     }
@@ -88,23 +90,22 @@ public interface H2AccountDaoImpl extends AccountDao {
     }
 
     @Override
-    default void update(Long id, Account account) throws SQLException {
+    default int update(Long id, Account account) throws SQLException {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("UPDATE account SET balance = ?, currency = ? WHERE id = ?");
             stmt.setBigDecimal(1, account.getBalance());
             stmt.setInt(2, account.getCurrency().getIso4217_code());
             stmt.setLong(3, id);
-            stmt.executeUpdate();
+            return stmt.executeUpdate();
         }
     }
 
     @Override
-    default void delete(Long id) throws SQLException {
+    default int delete(Long id) throws SQLException {
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("DELETE FROM account WHERE id = ?");
             stmt.setLong(1, id);
-            stmt.executeUpdate();
-            stmt.getGeneratedKeys();
+            return stmt.executeUpdate();
         }
     }
 }

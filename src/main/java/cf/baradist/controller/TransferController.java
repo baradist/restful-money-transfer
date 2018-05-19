@@ -12,7 +12,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 @Path("/transfer")
 @Api(value = "transfer", description = "Operations about money transfers")
@@ -24,11 +23,8 @@ public class TransferController {
     @ApiOperation(value = "Get money transfer by ID",
             notes = "Returns a money transfer by a given ID")
     @Path("/{id}")
-    public Response get(@PathParam("id") Long id) throws SQLException {
-        Optional<Transfer> user = transferService.getById(id);
-        return user.map(t ->
-                Response.ok(t).build()).orElseGet(() ->
-                Response.status(Response.Status.NOT_FOUND).build());
+    public Response get(@PathParam("id") Long id) throws SQLException, ApiException {
+        return Response.ok(transferService.getById(id).get()).build();
     }
 
     @GET
@@ -68,7 +64,9 @@ public class TransferController {
             notes = "Returns a list of money transfers by a given account IDs from/to that they were sent")
     @Path("/from/{fromAccountId}/to/{toAccountId}")
     public Response getTransfersByFromAccountIdAndToAccountId(
-            @PathParam("fromAccountId") Long fromAccountId, @PathParam("toAccountId") Long toAccountId) throws SQLException {
+            @PathParam("fromAccountId") Long fromAccountId,
+            @PathParam("toAccountId") Long toAccountId)
+            throws SQLException {
         List<Transfer> transfers = transferService.getTransfersByFromAccountIdAndToAccountId(fromAccountId, toAccountId);
         GenericEntity<List<Transfer>> genericEntity = new GenericEntity<List<Transfer>>(transfers) {
         };

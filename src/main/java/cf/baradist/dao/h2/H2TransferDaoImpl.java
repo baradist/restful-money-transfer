@@ -34,7 +34,7 @@ public interface H2TransferDaoImpl extends TransferDao {
     }
 
     @Override
-    default List<Transfer> getTransferByFromAccountId(Long fromAccountId) throws SQLException {
+    default List<Transfer> getTransfersByFromAccountId(Long fromAccountId) throws SQLException {
         List<Transfer> transfers = new ArrayList<>();
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(
@@ -53,7 +53,7 @@ public interface H2TransferDaoImpl extends TransferDao {
     }
 
     @Override
-    default List<Transfer> getTransferByToAccountId(Long toAccountId) throws SQLException {
+    default List<Transfer> getTransfersByToAccountId(Long toAccountId) throws SQLException {
         List<Transfer> transfers = new ArrayList<>();
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(
@@ -72,7 +72,7 @@ public interface H2TransferDaoImpl extends TransferDao {
     }
 
     @Override
-    default List<Transfer> getTransferByFromAccountIdAndToAccountId(Long fromAccountId, Long toAccountId) throws SQLException {
+    default List<Transfer> getTransfersByFromAccountIdAndToAccountId(Long fromAccountId, Long toAccountId) throws SQLException {
         List<Transfer> transfers = new ArrayList<>();
         try (Connection conn = getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(

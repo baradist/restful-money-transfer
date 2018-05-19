@@ -13,7 +13,7 @@ public interface UserDao extends Dao {
 
     Long insert(User user) throws SQLException;
 
-    void update(Long id, User user) throws SQLException;
+    int update(Long id, User user) throws SQLException;
 
-    void delete(Long id) throws SQLException;
+    int delete(Long id) throws SQLException;
 }
