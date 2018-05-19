@@ -17,10 +17,12 @@
 package cf.baradist.exception;
 
 public class BadRequestException extends ApiException {
-    private int code;
+
+    public BadRequestException(String msg) {
+        super(500, msg);
+    }
 
     public BadRequestException(int code, String msg) {
         super(code, msg);
-        this.code = code;
     }
 }

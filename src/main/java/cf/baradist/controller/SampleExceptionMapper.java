@@ -49,13 +49,13 @@ public class SampleExceptionMapper implements ExceptionMapper<Exception> {
         } else if (exception instanceof NotFoundException) {
             LOGGER.info(exception.getMessage(), exception);
             return Response
-                    .status(Status.NOT_FOUND)
+                    .status(((ApiException) exception).getCode())
                     .entity(new ApiResponse(ApiResponse.ERROR, exception
                             .getMessage())).build();
         } else if (exception instanceof BadRequestException) {
             LOGGER.warn(exception.getMessage(), exception);
             return Response
-                    .status(Status.BAD_REQUEST)
+                    .status(((ApiException) exception).getCode())
                     .entity(new ApiResponse(ApiResponse.ERROR, exception
                             .getMessage())).build();
         } else if (exception instanceof ApiException) {

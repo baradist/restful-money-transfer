@@ -59,18 +59,18 @@ public class TransferService {
         Optional<Account> fromAccount = accountDao.getById(transfer.getFromAccountId());
         Optional<Account> toAccount = accountDao.getById(transfer.getToAccountId());
         if (!fromAccount.isPresent() || !toAccount.isPresent()) {
-            throw new NotFoundException(404,
+            throw new NotFoundException(
                     "Wrong accountIds: (" + transfer.getFromAccountId() + ", " + transfer.getToAccountId() + ")");
         }
         if (transfer.getCurrencyCode() != fromAccount.get().getCurrency().getIso4217_code()) {
             throw new NotFoundException(406,
-                    "Currency of the transfer and of a From account aren't the same: ("
+                    "Transfer's and FROM account's carrencies aren't the same: ("
                             + transfer.getCurrencyCode() + " "
                             + fromAccount.get().getCurrency().getIso4217_code() + ")");
         }
         if (transfer.getCurrencyCode() != toAccount.get().getCurrency().getIso4217_code()) {
             throw new NotFoundException(406,
-                    "Currency of the transfer and of a To account aren't the same: ("
+                    "Transfer's and TO account's carrencies aren't the same: ("
                             + transfer.getCurrencyCode() + " "
                             + toAccount.get().getCurrency().getIso4217_code() + ")");
         }
