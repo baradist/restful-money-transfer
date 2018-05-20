@@ -8,6 +8,9 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.servlet.ServletContainer;
 
+import java.io.File;
+import java.nio.file.Path;
+
 public class JettyServer {
 
     private static final String DATA_REST_BASE_PATH = "/api";
@@ -36,10 +39,13 @@ public class JettyServer {
         swaggerServlet.setInitParameter("api.version", "v1");
         swaggerServlet.setInitParameter("swagger.api.basepath", DATA_REST_BASE_PATH);
 
+        // Find resourceBasePath
+        Path resourceBasePath = new File("src/main/resources/webapp").toPath().toRealPath();
+
         // Lastly, the default servlet for root content (always needed, to satisfy servlet spec)
         // It is important that this is last.
         ServletHolder holderPwd = new ServletHolder("default", new DefaultServlet());
-        holderPwd.setInitParameter("resourceBase", "./src/main/resources/webapp/");
+        holderPwd.setInitParameter("resourceBase", resourceBasePath.toUri().toASCIIString());
         holderPwd.setInitParameter("dirAllowed", "true");
         context.addServlet(holderPwd, "/*");
 
