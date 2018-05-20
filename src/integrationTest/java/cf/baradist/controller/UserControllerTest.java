@@ -36,34 +36,34 @@ public class UserControllerTest extends AbstractTest {
 
     @Test
     public void get() throws Exception {
-        Response response = controller.get(1L);
+        Response response = controller.getUserById(1L);
         assertThat(response.getEntity(), is(new User(1L, "John", "john_doe@gmail.com")));
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
     @Test(expected = NotFoundException.class)
     public void getNotExisting() throws Exception {
-        controller.get(77L);
+        controller.getUserById(77L);
     }
 
     @Test
     public void add() throws Exception {
-        Response response = controller.add(new User(0L, "NewUser", "AnEmailOfANewUser@mail.com"));
+        Response response = controller.addUser(new User(0L, "NewUser", "AnEmailOfANewUser@mail.com"));
         assertThat(response.getEntity(), is(new User(4L, "NewUser", "AnEmailOfANewUser@mail.com")));
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
     @Test
     public void update() throws Exception {
-        controller.update(1L, new User(0L, "NewNameOfAnOldUser", "email@mail.com"));
-        Response response = controller.get(1L);
+        controller.updateUser(1L, new User(0L, "NewNameOfAnOldUser", "email@mail.com"));
+        Response response = controller.getUserById(1L);
         assertThat(response.getEntity(), is(new User(1L, "NewNameOfAnOldUser", "email@mail.com")));
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
     @Test(expected = NotFoundException.class)
     public void delete() throws Exception {
-        controller.delete(1L);
-        controller.get(1L); // shouldn't be found
+        controller.deleteUser(1L);
+        controller.getUserById(1L); // shouldn't be found
     }
 }

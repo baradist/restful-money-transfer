@@ -30,34 +30,34 @@ public class UserController {
     }
 
     @GET
-    @Path("{id}")
+    @Path("{userId}")
     @ApiOperation(value = "Get user by ID",
             notes = "Gets a user by a given ID")
-    public Response get(@PathParam("id") Long id) throws SQLException, ApiException {
-        return Response.ok(userService.getUserById(id).get()).build();
+    public Response getUserById(@PathParam("userId") Long userId) throws SQLException, ApiException {
+        return Response.ok(userService.getUserById(userId).get()).build();
     }
 
     @POST
     @ApiOperation(value = "Create user",
             notes = "Creates a new user")
-    public Response add(User user) throws SQLException {
+    public Response addUser(User user) throws SQLException {
         return Response.ok(userService.addUser(user).get()).build();
     }
 
     @PUT
-    @Path("{id}")
+    @Path("{userId}")
     @ApiOperation(value = "Update user",
             notes = "Updates fields of a user with a given ID")
-    public Response update(@PathParam("id") long userId, User user) throws SQLException, ApiException {
+    public Response updateUser(@PathParam("userId") long userId, User user) throws SQLException, ApiException {
         userService.updateUser(userId, user);
         return Response.ok().build();
     }
 
     @DELETE
-    @Path("{id}")
+    @Path("{userId}")
     @ApiOperation(value = "Delete user",
             notes = "Removes a user with a given ID")
-    public Response delete(@PathParam("id") long userId) throws SQLException, ApiException {
+    public Response deleteUser(@PathParam("userId") long userId) throws SQLException, ApiException {
         userService.deleteUser(userId);
         return Response.ok().build();
     }

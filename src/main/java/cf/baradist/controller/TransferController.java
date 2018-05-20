@@ -22,9 +22,9 @@ public class TransferController {
     @GET
     @ApiOperation(value = "Get money transfer by ID",
             notes = "Returns a money transfer by a given ID")
-    @Path("/{id}")
-    public Response get(@PathParam("id") Long id) throws SQLException, ApiException {
-        return Response.ok(transferService.getById(id).get()).build();
+    @Path("/{transferId}")
+    public Response getTransferById(@PathParam("transferId") Long transferId) throws SQLException, ApiException {
+        return Response.ok(transferService.getById(transferId).get()).build();
     }
 
     @GET
@@ -75,16 +75,16 @@ public class TransferController {
 
     @POST
     @ApiOperation(value = "Create money transfer",
-            notes = "Make a new money transfer and change balances on accounts")
-    public Response add(Transfer transfer) throws ApiException, SQLException {
+            notes = "Make a new money transfer and change balances on ralated accounts")
+    public Response addTransfer(Transfer transfer) throws ApiException, SQLException {
         return Response.ok(transferService.addTransfer(transfer).get()).build();
     }
 
     @DELETE
     @ApiOperation(value = "Delete money transfer by ID",
-            notes = "Remove a monty transfer and rollback balances on accounts")
-    @Path("{id}")
-    public Response delete(@PathParam("id") Long transferId) throws ApiException {
+            notes = "Remove a monty transfer and rollback balances on ralated accounts")
+    @Path("{transferId}")
+    public Response deleteTransfer(@PathParam("transferId") Long transferId) throws ApiException {
         transferService.rollbackTransfer(transferId);
         return Response.ok().build();
     }
