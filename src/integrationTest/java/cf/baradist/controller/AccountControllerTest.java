@@ -51,57 +51,57 @@ public class AccountControllerTest extends AbstractTest {
 
     @Test
     public void get() throws Exception {
-        Response response = controller.get(1L);
+        Response response = controller.getAccountById(1L);
         assertThat(response.getEntity(),
                 is(new Account(1L, 1L, new BigDecimal("77.70"), USD)));
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
 
-        response = controller.get(2L);
+        response = controller.getAccountById(2L);
         assertThat(response.getEntity(),
                 is(new Account(2L, 1L, new BigDecimal("0.00"), USD)));
     }
 
     @Test(expected = NotFoundException.class)
     public void getNotExisting() throws Exception {
-        controller.get(77L);
+        controller.getAccountById(77L);
     }
 
     @Test
     public void add() throws Exception {
-        Response response = controller.add(new Account(0L, 2L, new BigDecimal("42.30"), EUR));
+        Response response = controller.addAccount(new Account(0L, 2L, new BigDecimal("42.30"), EUR));
         assertThat(response.getEntity(), is(new Account(6L, 2L, new BigDecimal("42.30"), EUR)));
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
     @Test
     public void update() throws Exception {
-        controller.update(1L, new Account(0L, 1L, new BigDecimal("88.88"), EUR));
-        Response response = controller.get(1L);
+        controller.updateAccount(1L, new Account(0L, 1L, new BigDecimal("88.88"), EUR));
+        Response response = controller.getAccountById(1L);
         assertThat(response.getEntity(), is(new Account(1L, 1L, new BigDecimal("88.88"), EUR)));
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
     @Test
     public void updateUserIdDoesntChange() throws Exception {
-        controller.update(1L, new Account(0L, 2L, new BigDecimal("88.88"), EUR));
-        Response response = controller.get(1L);
+        controller.updateAccount(1L, new Account(0L, 2L, new BigDecimal("88.88"), EUR));
+        Response response = controller.getAccountById(1L);
         assertThat(response.getEntity(), is(new Account(1L, 1L, new BigDecimal("88.88"), EUR)));
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
 
     @Test(expected = NotFoundException.class)
     public void updateNotExisting() throws Exception {
-        controller.update(77L, new Account(77L, 1L, new BigDecimal("88.88"), EUR));
+        controller.updateAccount(77L, new Account(77L, 1L, new BigDecimal("88.88"), EUR));
     }
 
     @Test(expected = NotFoundException.class)
     public void delete() throws Exception {
-        controller.delete(1L);
-        controller.get(1L); // shouldn't be found
+        controller.deleteAccount(1L);
+        controller.getAccountById(1L); // shouldn't be found
     }
 
     @Test(expected = NotFoundException.class)
     public void deleteNotExisting() throws Exception {
-        controller.delete(77L);
+        controller.deleteAccount(77L);
     }
 }

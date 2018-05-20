@@ -40,7 +40,7 @@ public class TransferControllerTest extends AbstractTest {
 
     @Test
     public void get() throws Exception {
-        Response response = controller.get(1L);
+        Response response = controller.getTransferById(1L);
         assertThat(response.getEntity(), is(transfer));
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
     }
@@ -79,14 +79,14 @@ public class TransferControllerTest extends AbstractTest {
 
     @Test(expected = NotFoundException.class)
     public void getNotExisting() throws Exception {
-        Response response = controller.get(77L);
+        Response response = controller.getTransferById(77L);
     }
 
     @Test
     public void add() throws Exception {
-        Response response = controller.add(new Transfer(0L, 840, new BigDecimal("10.00"), 3L, 1L));
-        Account from = (Account) accountController.get(3L).getEntity();
-        Account to = (Account) accountController.get(1L).getEntity();
+        Response response = controller.addTransfer(new Transfer(0L, 840, new BigDecimal("10.00"), 3L, 1L));
+        Account from = (Account) accountController.getAccountById(3L).getEntity();
+        Account to = (Account) accountController.getAccountById(1L).getEntity();
         assertThat(from.getBalance(), is(new BigDecimal("67.70")));
         assertThat(to.getBalance(), is(new BigDecimal("87.70")));
 
@@ -97,13 +97,13 @@ public class TransferControllerTest extends AbstractTest {
     @Ignore
     @Test
     public void delete() throws Exception {
-        final Transfer removableTransfer = (Transfer) controller.get(1L).getEntity();
+        final Transfer removableTransfer = (Transfer) controller.getTransferById(1L).getEntity();
 
-        Response response = controller.delete(removableTransfer.getId());
+        Response response = controller.deleteTransfer(removableTransfer.getId());
         assertThat(response.getStatusInfo(), is(Response.Status.OK));
 
-        Account from = (Account) accountController.get(removableTransfer.getFromAccountId()).getEntity();
-        Account to = (Account) accountController.get(removableTransfer.getToAccountId()).getEntity();
+        Account from = (Account) accountController.getAccountById(removableTransfer.getFromAccountId()).getEntity();
+        Account to = (Account) accountController.getAccountById(removableTransfer.getToAccountId()).getEntity();
 
         assertThat(from.getBalance(), is(new BigDecimal("155.40")));
         assertThat(to.getBalance(), is(new BigDecimal("0.00")));

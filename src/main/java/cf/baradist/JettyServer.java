@@ -10,7 +10,6 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 public class JettyServer {
 
-    private static final String PROPERTIES_FILE = "src/main/resources/application.properties";
     private static final String DATA_REST_BASE_PATH = "/api";
     private static final int DATA_REST_PORT = 8080;
 
@@ -34,7 +33,7 @@ public class JettyServer {
         // Setup Swagger servlet
         ServletHolder swaggerServlet = context.addServlet(DefaultJaxrsConfig.class, "/swagger-core");
         swaggerServlet.setInitOrder(2);
-        swaggerServlet.setInitParameter("api.version", "1.0.0");
+        swaggerServlet.setInitParameter("api.version", "v1");
         swaggerServlet.setInitParameter("swagger.api.basepath", DATA_REST_BASE_PATH);
 
         // Lastly, the default servlet for root content (always needed, to satisfy servlet spec)
