@@ -15,7 +15,7 @@ Simple Java-application that represents a REST-API with users, their accounts an
 You can see complete API-description on a swaggerhub: https://app.swaggerhub.com/apis/baradist/money-transfer/v1
 
 ## Build locally
-You shold've installed jdk8+ and gradle 4.6 (or later)
+You supposed to have jdk8+ installed
 
 `git clone https://github.com/baradist/restful-money-transfer.git`
 
@@ -29,7 +29,7 @@ build/reports/tests/test/index.html
 ### Integration tests
 build/reports/tests/integrationTest/index.html
 
-## (optional) gradle scan
+## (optionally) gradle scan
 You can build an app with additional parameter --scan
 
 `./gradlew build --scan`
@@ -38,6 +38,8 @@ accept Gradle Terms of Service, follow instructions and see all details about bu
 
 # Run and play
 `java -jar build/libs/restful-money-transfer.jar`
+
+(`java -jar build\libs\restful-money-transfer.jar` on Windows) 
 
 or `./gradlew runShadow` it's up to you
 
