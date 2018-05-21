@@ -20,16 +20,13 @@ public class AccountControllerTest extends AbstractTest {
     private static final Currency USD = new Currency(840, "USD", "United States dollar");
     private static final Currency EUR = new Currency(978, "EUR", "Euro");
     private AccountController controller;
+    private List<Account> accounts;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
         controller = new AccountController();
-    }
-
-    @Test
-    public void getAllAccountsByUserId() throws Exception {
-        List<Account> accounts = new ArrayList<Account>() {
+        accounts = new ArrayList<Account>() {
             {
                 add(new Account(1L, 1L, new BigDecimal("77.70"), USD));
                 add(new Account(2L, 1L, new BigDecimal("0.00"), USD));
@@ -38,7 +35,16 @@ public class AccountControllerTest extends AbstractTest {
                 add(new Account(5L, 3L, new BigDecimal("77.70"), EUR));
             }
         };
+    }
 
+    @Test
+    public void getAllAccounts() throws Exception {
+        assertThat(controller.getAllAccounts().getEntity(),
+                is(accounts));
+    }
+
+    @Test
+    public void getAllAccountsByUserId() throws Exception {
         assertThat(controller.getAllAccountsByUserId(1L).getEntity(),
                 is(accounts.stream().filter(a -> a.getUserId() == 1L).collect(Collectors.toList())));
         assertThat(controller.getAllAccountsByUserId(2L).getEntity(),
