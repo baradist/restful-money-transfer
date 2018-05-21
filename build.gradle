@@ -1,0 +1,87 @@
+buildscript {
+    repositories {
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
+    }
+}
+
+group 'cf.baradist'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+mainClassName = 'cf.baradist.JettyServer'
+
+// generate a fat jar only
+jar.enabled = false
+shadowJar {
+    baseName = 'restful-money-transfer'
+    classifier = null
+    version = null
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
+def jettyVersion = '9.4.10.v20180503'
+def jerseyVersion = '2.27'
+def logbackVersion = '1.0.1'
+
+dependencies {
+    // Jetty
+    compile "org.eclipse.jetty:jetty-server:${jettyVersion}"
+    compile "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
+
+    compile "org.glassfish.jersey.containers:jersey-container-servlet-core:${jerseyVersion}"
+    compile "org.glassfish.jersey.media:jersey-media-moxy:${jerseyVersion}"
+    compile "org.glassfish.jersey.inject:jersey-hk2:${jerseyVersion}"
+    compile 'io.swagger:swagger-jersey2-jaxrs:1.5.10'
+
+    compile 'com.h2database:h2:1.4.197'
+
+    compile "ch.qos.logback:logback-classic:${logbackVersion}"
+    compile "ch.qos.logback:logback-core:${logbackVersion}"
+
+    testCompile 'junit:junit:4.8.1'
+    testCompile 'org.mockito:mockito-core:2.18.3'
+}
+
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir "${projectDir}/src/integrationTest/java"
+        }
+        resources {
+            srcDir "${projectDir}/src/integrationTest/resources"
+        }
+    }
+}
+
+task integrationTest(type: Test, group: 'verification') {
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    outputs.upToDateWhen { false }
+    systemProperties System.getProperties()
+}
+
+check.dependsOn integrationTest
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.6'
+}
